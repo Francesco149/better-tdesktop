@@ -1,6 +1,8 @@
 [Desktop Entry]
 Version=1.0
 Name=Telegram Desktop
+GenericName=Telegram Desktop
+Keywords=IM;Chat;
 Comment=Official desktop version of Telegram messaging app
 Exec=Telegram -- %u
 Icon=telegram-desktop
