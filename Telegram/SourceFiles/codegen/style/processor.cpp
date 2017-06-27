@@ -21,7 +21,6 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 #include "codegen/style/processor.h"
 
 #include <QtCore/QDir>
-#include <QtCore/QFileInfo>
 #include "codegen/common/cpp_file.h"
 #include "codegen/style/parsed_file.h"
 #include "codegen/style/generator.h"

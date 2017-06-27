@@ -22,9 +22,8 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 
 #include <memory>
 #include <vector>
-#include <QtCore/QString>
+#include <QtMath>
 #include <QtCore/QStringList>
-#include <QtCore/QtMath>
 
 namespace codegen {
 namespace style {
