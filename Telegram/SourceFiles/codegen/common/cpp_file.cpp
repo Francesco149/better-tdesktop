@@ -20,7 +20,6 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 */
 #include "codegen/common/cpp_file.h"
 
-#include <QtCore/QFileInfo>
 #include <QtCore/QDir>
 
 namespace codegen {
