@@ -57,6 +57,19 @@ join() {
     done
 }
 
+handle_sigint() {
+    echo "Caught SIGINT, killing jobs..."
+    while [ true ]
+    do
+        pid=$(echo $pids | cut -d"," -f1-1)
+        [ -z $pid ] && break
+        kill -INT $pid
+        pids=$(echo $pids | cut -d"," -f2-)
+    done
+}
+
+trap handle_sigint SIGINT
+
 # -----------------------------------------------------------------
 
 rm -rf out
