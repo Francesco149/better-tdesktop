@@ -176,7 +176,7 @@ addjob \
     "$resdir"/scheme.tl
 
 join
-cat out/tmp.* | grep -v "can't kill"
+cat out/tmp.*
 rm out/tmp.*
 
 # TODO: run moc, rcc, ...
