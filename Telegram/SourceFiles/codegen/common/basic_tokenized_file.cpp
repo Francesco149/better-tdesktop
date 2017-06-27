@@ -291,6 +291,7 @@ LogStream operator<<(LogStream &&stream, BasicTokenizedFile::Token::Type type) {
 	case Type::Minus: value = "'-'"; break;
 	case Type::Equals: value = "'='"; break;
 	case Type::Name: value = "'identifier'"; break;
+	default: break;
 	}
 	return std::forward<LogStream>(stream) << value;
 }
