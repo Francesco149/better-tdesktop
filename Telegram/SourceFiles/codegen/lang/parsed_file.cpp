@@ -36,15 +36,6 @@ using BasicType = BasicToken::Type;
 
 constexpr int kErrorBadString          = 806;
 
-bool ValidateAnsiString(const QString &value) {
-	for (auto ch : value) {
-		if (ch.unicode() > 127) {
-			return false;
-		}
-	}
-	return true;
-}
-
 bool ValidateKey(const QString &key) {
 	static const auto validator = QRegularExpression("^[a-z0-9_.-]+$", QRegularExpression::CaseInsensitiveOption);
 	if (!validator.match(key).hasMatch()) {

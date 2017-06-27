@@ -82,27 +82,6 @@ QString stringToEncodedString(const QString &str) {
 	return '"' + (startOnNewLine ? lineBreak : QString()) + result + '"';
 }
 
-QString stringToEncodedString(const std::string &str) {
-	return stringToEncodedString(QString::fromStdString(str));
-}
-
-QString stringToBinaryArray(const std::string &str) {
-	QStringList rows, chars;
-	chars.reserve(13);
-	rows.reserve(1 + (str.size() / 13));
-	for (uchar ch : str) {
-		if (chars.size() > 12) {
-			rows.push_back(chars.join(", "));
-			chars.clear();
-		}
-		chars.push_back(QString("0x") + hexFirstChar(ch) + hexSecondChar(ch));
-	}
-	if (!chars.isEmpty()) {
-		rows.push_back(chars.join(", "));
-	}
-	return QString("{") + ((rows.size() > 1) ? '\n' : ' ') + rows.join(",\n") + " }";
-}
-
 } // namespace
 
 Generator::Generator(const Langpack &langpack, const QString &destBasePath, const common::ProjectInfo &project)
