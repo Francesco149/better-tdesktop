@@ -81,16 +81,20 @@ pkglibs="$(pkg-config --libs $pkgs)"
 for type in lang numbers
 do
     exe="out/codegen_${type}"
-    echo $exe
 
-    addjob \
-    $cxx \
-      $cxxflags \
-      $pkgflags \
-      "$b/common/"*.cpp \
-      "$b/$type/"*.cpp \
-      $pkglibs \
-      -o "$exe"
+    job() {
+        echo $exe
+
+        $cxx \
+          $cxxflags \
+          $pkgflags \
+          "$b/common/"*.cpp \
+          "$b/$type/"*.cpp \
+          $pkglibs \
+          -o "$exe"
+    }
+
+    addjob job
 done
 
 # emoji actually uses Qt5Gui
@@ -101,16 +105,20 @@ pkglibs="$(pkg-config --libs $pkgs)"
 for type in emoji style
 do
     exe="out/codegen_${type}"
-    echo $exe
 
-    addjob \
-    $cxx \
-      $cxxflags \
-      $pkgflags \
-      "$b/common/"*.cpp \
-      "$b/$type/"*.cpp \
-      $pkglibs \
-      -o "$exe"
+    job() {
+        echo $exe
+
+        $cxx \
+          $cxxflags \
+          $pkgflags \
+          "$b/common/"*.cpp \
+          "$b/$type/"*.cpp \
+          $pkglibs \
+          -o "$exe"
+    }
+
+    addjob job
 done
 
 join
