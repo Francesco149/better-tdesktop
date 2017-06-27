@@ -1,13 +1,67 @@
 #!/bin/sh
 
-# TODO: parallelize builds
 # TODO: *maybe* make a makefile when I know how every part of the
 #       build works
 
-rm -rf out
-mkdir -p out
+# -----------------------------------------------------------------
+# just some rudimentary parallel job manager
+
+threads=${MAKE_THREADS:-9}
+pids=""
+
+addjob() {
+    newpid=$1
+
+    while [ true ]
+    do
+        # trim completed processes off pids
+        tmp=$pids
+        newpids=""
+        while [ true ]
+        do
+            pid=$(echo $tmp | cut -d"," -f1-1)
+            [ -z $pid ] && break
+            kill -0 $pid && newpids=$pid,$newpids
+            tmp=$(echo $tmp | cut -d"," -f2-)
+        done
+
+        pids=$newpids
+
+        # wait until there's room for new jobs
+        if [ $(echo $pids | grep -o "," | wc -l) -ge $(expr $threads - 1) ]
+        then
+            sleep 0.1
+        else
+            break
+        fi
+    done
+
+    pids=$newpid,$pids
+}
+
+join() {
+    while [ true ]
+    do
+        pid=$(echo $pids | cut -d"," -f1-1)
+        [ -z $pid ] && break
+        wait $pid
+        retcode=$?
+
+        # 127 = already terminated
+        if [ $retcode != 0 ] && [ $retcode != 127 ]
+        then
+            echo "job $pid failed with code $retcode"
+            cat out/tmp.*
+            exit $retcode
+        fi
+        pids=$(echo $pids | cut -d"," -f2-)
+    done
+}
 
 # -----------------------------------------------------------------
+
+rm -rf out
+mkdir -p out
 
 cxx=${CXX:-g++}
 sourcedir="Telegram/SourceFiles"
@@ -37,7 +91,9 @@ do
       "$b/$type/"*.cpp \
       $pkglibs \
       -o "$exe" \
-      || exit 1
+    2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
+    pid=$!
+    addjob $pid
 done
 
 # emoji actually uses Qt5Gui
@@ -57,8 +113,14 @@ do
       "$b/$type/"*.cpp \
       $pkglibs \
       -o "$exe" \
-      || exit 1
+    2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
+    pid=$!
+    addjob $pid
 done
+
+join
+cat out/tmp.*
+rm out/tmp.*
 
 # -----------------------------------------------------------------
 
