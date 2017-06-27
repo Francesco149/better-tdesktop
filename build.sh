@@ -10,7 +10,8 @@ threads=${MAKE_THREADS:-9}
 pids=""
 
 addjob() {
-    newpid=$1
+    $@ 2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
+    newpid=$!
 
     while [ true ]
     do
@@ -84,16 +85,14 @@ do
     exe="out/codegen_${type}"
     echo $exe
 
+    addjob \
     $cxx \
       $cxxflags \
       $pkgflags \
       "$b/common/"*.cpp \
       "$b/$type/"*.cpp \
       $pkglibs \
-      -o "$exe" \
-    2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
-    pid=$!
-    addjob $pid
+      -o "$exe"
 done
 
 # emoji actually uses Qt5Gui
@@ -106,16 +105,14 @@ do
     exe="out/codegen_${type}"
     echo $exe
 
+    addjob \
     $cxx \
       $cxxflags \
       $pkgflags \
       "$b/common/"*.cpp \
       "$b/$type/"*.cpp \
       $pkglibs \
-      -o "$exe" \
-    2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
-    pid=$!
-    addjob $pid
+      -o "$exe"
 done
 
 join
