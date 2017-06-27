@@ -22,10 +22,6 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 
 #include <QFileInfo>
 #include <memory>
-#include <QtCore/QSet>
-#include <QtCore/QBuffer>
-#include <QtGui/QImage>
-#include <QtGui/QPainter>
 #include <map>
 
 namespace codegen {

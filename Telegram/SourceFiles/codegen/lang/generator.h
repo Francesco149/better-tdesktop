@@ -23,7 +23,6 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 #include <set>
 #include <functional>
 #include <QtCore/QString>
-#include <QtCore/QSet>
 #include "codegen/common/cpp_file.h"
 #include "codegen/lang/parsed_file.h"
 
