@@ -127,7 +127,45 @@ rm out/tmp.*
 
 # -----------------------------------------------------------------
 
-# TODO: run codegens
+resdir="Telegram/Resources"
+
+codegenjob() {
+  echo "Generating langs"
+  out/codegen_lang -o out "$resdir"/langs/lang.strings
+
+  echo "Generating numbers"
+  out/codegen_numbers -o out "$resdir"/numbers.txt
+
+  echo "Generating emoji"
+  out/codegen_emoji -o out
+}
+
+addjob codegenjob
+
+find . -name "*.style" | while read style
+do
+    job() {
+      echo $style
+      out/codegen_style \
+        -I "$resdir" \
+        -I "$sourcedir" \
+        -o out/styles \
+        $style
+    }
+
+    addjob job
+done
+
+echo "Generating scheme"
+addjob \
+  python "$sourcedir/codegen/scheme/codegen_scheme.py" \
+    -o out \
+    "$resdir"/scheme.tl
+
+join
+cat out/tmp.* | grep -v "can't kill"
+rm out/tmp.*
+
 # TODO: run moc, rcc, ...
 # TODO: compile rest
 
