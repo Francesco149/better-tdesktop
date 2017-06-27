@@ -22,7 +22,6 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 
 #include <memory>
 #include <QtCore/QString>
-#include <QtCore/QSet>
 #include "codegen/common/cpp_file.h"
 #include "codegen/emoji/options.h"
 #include "codegen/emoji/data.h"
