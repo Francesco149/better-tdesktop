@@ -10,9 +10,6 @@ threads=${MAKE_THREADS:-9}
 pids=""
 
 addjob() {
-    $@ 2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
-    newpid=$!
-
     while [ true ]
     do
         # trim completed processes off pids
@@ -29,7 +26,7 @@ addjob() {
         pids=$newpids
 
         # wait until there's room for new jobs
-        if [ $(echo $pids | grep -o "," | wc -l) -ge $(expr $threads - 1) ]
+        if [ $(echo $pids | grep -o "," | wc -l) -ge $threads ]
         then
             sleep 0.1
         else
@@ -37,7 +34,8 @@ addjob() {
         fi
     done
 
-    pids=$newpid,$pids
+    $@ 2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
+    pids=$!,$pids
 }
 
 join() {
