@@ -21,8 +21,6 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 #include "codegen/lang/parsed_file.h"
 
 #include <iostream>
-#include <QtCore/QMap>
-#include <QtCore/QDir>
 #include <QtCore/QRegularExpression>
 #include "codegen/common/basic_tokenized_file.h"
 #include "codegen/common/logging.h"

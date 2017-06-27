@@ -20,9 +20,7 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 */
 #include "codegen/lang/options.h"
 
-#include <ostream>
 #include <QtCore/QCoreApplication>
-#include <QtCore/QDir>
 #include "codegen/common/logging.h"
 
 namespace codegen {
