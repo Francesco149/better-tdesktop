@@ -1,5 +1,7 @@
 #!/bin/sh
 
+sd=$(pwd)
+
 # TODO: *maybe* make a makefile when I know how every part of the
 #       build works
 
@@ -34,7 +36,7 @@ addjob() {
         fi
     done
 
-    $@ > "$(mktemp -p out -u tmp.XXXXXX)" 2>&1 &
+    $@ > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1 &
     pids=$!,$pids
 }
 
@@ -57,7 +59,8 @@ join() {
         then
             echo "job $pid failed with code $retcode"
             echo "Check 'out/build.log' for more details"
-            cat out/tmp.* >> out/build.log
+            cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+            cd $sd
             exit $retcode
         fi
         pids=$(echo $pids | cut -d"," -f2-)
@@ -80,10 +83,10 @@ trap handle_sigint SIGINT
 
 # -----------------------------------------------------------------
 
-rm -rf out
-mkdir -p out
+rm -rf "$sd"/out
+mkdir -p "$sd"/out
 
-echo "Build started on $(date)" > out/build.log
+echo "Build started on $(date)" > "$sd/out"/build.log
 
 starttime=$(date +"%s")
 
@@ -93,12 +96,12 @@ cxx=${CXX:-g++}
 # generate code for localization, emoji, and other stuff.
 
 cxxflags="-std=c++14 -pipe -Wall -fPIC"
-cxxflags="$cxxflags -ITelegram/SourceFiles"
+cxxflags="$cxxflags -I$sd/Telegram/SourceFiles"
 cxxflags="$cxxflags $CXXFLAGS"
 
 # -----------------------------------------------------------------
 
-b=Telegram/SourceFiles/codegen
+b="$sd"/Telegram/SourceFiles/codegen
 
 # lang and numbers codegens didn't actually need Qt5Gui
 # the devs simply forgot to remove the QtImage include they
@@ -109,7 +112,7 @@ pkglibs="$(pkg-config --libs $pkgs)"
 
 for type in lang numbers
 do
-    exe="out/codegen_${type}"
+    exe="$sd/out/codegen_${type}"
 
     job() {
         echo $exe
@@ -133,7 +136,7 @@ pkglibs="$(pkg-config --libs $pkgs)"
 
 for type in emoji style
 do
-    exe="out/codegen_${type}"
+    exe="$sd/out/codegen_${type}"
 
     job() {
         echo $exe
@@ -151,35 +154,55 @@ do
 done
 
 join
-cat out/tmp.* >> out/build.log
-rm out/tmp.*
+cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
-b="Telegram/Resources"
+b="$sd/Telegram/Resources"
 
 codegenjob() {
   echo "Generating langs"
-  out/codegen_lang -o out "$b"/langs/lang.strings
+  "$sd"/out/codegen_lang \
+    -o "$sd"/out "$b"/langs/lang.strings
 
   echo "Generating numbers"
-  out/codegen_numbers -o out "$b"/numbers.txt
+  "$sd"/out/codegen_numbers \
+    -o "$sd"/out "$b"/numbers.txt
 
   echo "Generating emoji"
-  out/codegen_emoji -o out
+  "$sd"/out/codegen_emoji -o "$sd"/out
 }
 
 addjob codegenjob
 
+relpath() {
+    python - "$1" "${2:-$PWD}" << "EOF"
+import sys
+import os.path
+print(os.path.relpath(sys.argv[1], sys.argv[2]))
+EOF
+}
+
 stylejob() {
-    find Telegram -name "*.style" | while read style
+    rsd="$(relpath "$sd")"
+    rb="$(relpath "$b")"
+
+    find "$sd"/Telegram -name "*.style" \
+                     -o -name "*.palette" | \
+    while read style
     do
+        # for some reason codegen-style wants relative paths
+        # TODO: clean this up
+        # TODO: check if there's any issues with absolute paths
+        #       in the other codegen tools
         echo "$style"
-        out/codegen_style \
-          -I "$b" \
-          -I Telegram/SourceFiles \
-          -o out/styles \
-          "$style"
+        "$sd"/out/codegen_style \
+          -I "$rb" \
+          -I "$rsd/Telegram/SourceFiles" \
+          -o "$rsd/out/styles" \
+          -w "$rsd" \
+          "$style" || return 1
     done
 }
 
@@ -187,9 +210,9 @@ addjob stylejob
 
 schemejob() {
     echo "Generating scheme"
-    codegen_scheme_dir=Telegram/SourceFiles/codegen/scheme
+    codegen_scheme_dir="$sd"/Telegram/SourceFiles/codegen/scheme
     python $codegen_scheme_dir/codegen_scheme.py \
-      -o out \
+      -o "$sd"/out \
       "$b"/scheme.tl
 }
 
@@ -200,15 +223,16 @@ addjob schemejob
 # QT uses special metaprogramming syntax that needs to be handled
 # by moc, which will generate an additional cpp file
 
-b=Telegram/SourceFiles
+b="$sd"/Telegram/SourceFiles
 
 run_moc() {
     for file in $@
     do
         echo "moc'ing $file"
         prefix="$(dirname "$file")"
-        mkdir -p "out/moc/$prefix"
-        dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
+        mocprefix="$sd/out/moc/"
+        mkdir -p "$mocprefix/$prefix"
+        dstfile="$mocprefix/$prefix"/moc_"$(basename $file)".cpp
         moc --no-notes "$file" -o "$dstfile"
         [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
     done
@@ -229,13 +253,13 @@ done
 
 # resource files are compiled to hardcoded cpp files by qt's rcc
 
-b="Telegram/Resources/qrc"
+b="$sd/Telegram/Resources/qrc"
 
 run_rcc() {
     for file in $@
     do
         echo "rcc'ing $file"
-        mkdir -p "out/qrc"
+        mkdir -p "$sd/out/qrc"
         filename=$(basename "$file")
         filename_noext=$(echo $filename | rev | cut -d"." -f2- | rev)
 
@@ -243,15 +267,15 @@ run_rcc() {
           -no-compress \
           -name $filename_noext \
           "$file" \
-          -o "out/qrc/qrc_$filename_noext.cpp"
+          -o "$sd/out/qrc/qrc_$filename_noext.cpp"
     done
 }
 
 addjob run_rcc "$b"/*.qrc
 
 join
-cat out/tmp.* >> out/build.log
-rm out/tmp.*
+cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
@@ -265,9 +289,11 @@ mins=$(expr $diff / 60)
 secs=$(expr $diff % 60)
 
 timemsg="Time spent: ${mins}m ${secs}s"
-echo $timemsg >> out/build.log
+echo $timemsg >> "$sd"/out/build.log
 
 echo ""
 echo $timemsg
 echo "Check 'out/build.log' for more details"
+
+cd $sd
 
