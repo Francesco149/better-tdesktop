@@ -183,6 +183,9 @@ addjob schemejob
 
 # -----------------------------------------------------------------
 
+# QT uses special metaprogramming syntax that needs to be handled
+# by moc, which will generate an additional cpp file
+
 run_moc() {
     file=$1
     echo "moc'ing $file"
