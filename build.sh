@@ -34,7 +34,7 @@ addjob() {
         fi
     done
 
-    $@ 2>&1 > "$(mktemp -p out -u tmp.XXXXXX)" &
+    $@ > "$(mktemp -p out -u tmp.XXXXXX)" 2>&1 &
     pids=$!,$pids
 }
 
