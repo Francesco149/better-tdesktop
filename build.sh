@@ -279,6 +279,85 @@ rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
+qt_private_headers() {
+    flags=""
+
+    # telegram uses private Qt headers, which I assume are supposed
+    # to be internal. they are located at module_include_dir/qtver
+    for pkg in $@
+    do
+        pkgver="$(pkg-config --modversion $pkg)"
+        for includedir in \
+          $(pkg-config --cflags-only-I $pkg | sed 's|-I||g')
+        do
+            flags="-I$includedir/$pkgver $flags"
+
+            for privatedir in "$includedir/$pkgver"/*; do
+                flags="-I$privatedir $flags"
+            done
+        done
+    done
+
+    echo $flags
+}
+
+# -----------------------------------------------------------------
+
+cd "$sd"/out
+
+cxxflags="-std=c++14 -pipe -Wall -fPIC -Wno-unused-variable"
+cxxflags="$cxxflags -I$sd/Telegram/SourceFiles -I$sd/out"
+cxxflags="$cxxflags -DQ_OS_LINUX64=1"
+cxxflags="$cxxflags -DTDESKTOP_DISABLE_UNITY_INTEGRATION=1"
+cxxflags="$cxxflags -DTDESKTOP_DISABLE_AUTOUPDATE=1"
+cxxflags="$cxxflags -DTDESKTOP_DISABLE_CRASH_REPORTS=1"
+
+# TODO: not all these packages are needed for the pch
+#       move the ones that are exclusive to the main source
+#       same goes for defines
+qtpkgs="Qt5Core Qt5Gui"
+pkgs="$qtpkgs gtk+-2.0 appindicator-0.1 opus zlib"
+pkgflags="$(pkg-config --cflags $pkgs)"
+pkgflags="$pkgflags $(qt_private_headers $qtpkgs)"
+pkglibs="$(pkg-config --libs $pkgs)"
+
+# mkspec, some more half-undocumented include dirs
+qarchdata="$(qmake -query QT_INSTALL_ARCHDATA)"
+qspec="$(qmake -query QMAKE_SPEC)"
+cxxflags="$cxxflags -I$qarchdata/mkspecs/$qspec"
+
+# third-party lib includes
+tp=../Telegram/ThirdParty
+for includedir in GSL/include libtgvoip minizip variant/include
+do
+    cxxflags="$cxxflags -I$tp/$includedir"
+done
+
+cxxflags="$cxxflags $CXXFLAGS"
+
+b="$sd"/Telegram/SourceFiles
+
+if [ -e "$b/stdafx.h.gch" ]; then
+    echo "Found precompiled header"
+else
+    echo "Compiling precompiled header..."
+
+    $cxx \
+      -x c++-header \
+      $cxxflags \
+      $pkgflags \
+      "$b"/stdafx.cpp \
+      -o "$b"/stdafx.h.gch \
+      || exit $?
+
+    # this piece of crap is like 280 MB btw lol
+fi
+
+# now including stdafx.h will automatically use the .gch
+# precompiled file
+
+# -----------------------------------------------------------------
+
 # TODO: compile rest
 
 # -----------------------------------------------------------------
