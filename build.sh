@@ -189,6 +189,8 @@ sourcedir_moc() {
         moc --no-notes "$file" -o "$dstfile"
         [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
     done
+
+    exit 0
 }
 
 addjob sourcedir_moc
