@@ -228,7 +228,34 @@ rm out/tmp.*
 
 # -----------------------------------------------------------------
 
-# TODO: run rcc, ...
+# resource files are compiled to hardcoded cpp files by qt's rcc
+
+b="Telegram/Resources/qrc"
+
+run_rcc() {
+    for file in $@
+    do
+        echo "rcc'ing $file"
+        mkdir -p "out/qrc"
+        filename=$(basename "$file")
+        filename_noext=$(echo $filename | rev | cut -d"." -f2- | rev)
+
+        rcc \
+          -no-compress \
+          -name $filename_noext \
+          "$file" \
+          -o "out/qrc/qrc_$filename_noext.cpp"
+    done
+}
+
+addjob run_rcc "$b"/*.qrc
+
+join
+cat out/tmp.* >> out/build.log
+rm out/tmp.*
+
+# -----------------------------------------------------------------
+
 # TODO: compile rest
 
 # -----------------------------------------------------------------
