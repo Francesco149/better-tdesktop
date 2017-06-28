@@ -17,7 +17,9 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
 */
 #pragma once
 
+#ifdef __GNU_LIBC__
 #include <execinfo.h>
+#endif
 #include <signal.h>
 
 namespace Platform {
