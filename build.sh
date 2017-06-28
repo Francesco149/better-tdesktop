@@ -76,16 +76,19 @@ rm -rf out
 mkdir -p out
 
 echo "Build started on $(date)" > out/build.log
+
 starttime=$(date +"%s")
 
 cxx=${CXX:-g++}
-sourcedir="Telegram/SourceFiles"
 
 # first of all, we build the codegen's. these will be used to
 # generate code for localization, emoji, and other stuff.
 
-cxxflags="-std=c++14 -pipe -Wall -fPIC -I$sourcedir $CXXFLAGS"
-b="$sourcedir/codegen"
+cxxflags="-std=c++14 -pipe -Wall -fPIC"
+cxxflags="$cxxflags -ITelegram/SourceFiles"
+cxxflags="$cxxflags $CXXFLAGS"
+
+b=Telegram/SourceFiles/codegen
 
 # lang and numbers codegens didn't actually need Qt5Gui
 # the devs simply forgot to remove the QtImage include they
@@ -164,7 +167,7 @@ do
       echo $style
       out/codegen_style \
         -I "$b" \
-        -I "$sourcedir" \
+        -I Telegram/SourceFiles \
         -o out/styles \
         $style
     }
@@ -174,7 +177,8 @@ done
 
 schemejob() {
     echo "Generating scheme"
-    python "$sourcedir/codegen/scheme/codegen_scheme.py" \
+    codegen_scheme_dir=Telegram/SourceFiles/codegen/scheme
+    python $codegen_scheme_dir/codegen_scheme.py \
       -o out \
       "$b"/scheme.tl
 }
@@ -186,7 +190,7 @@ addjob schemejob
 # QT uses special metaprogramming syntax that needs to be handled
 # by moc, which will generate an additional cpp file
 
-b="$sourcedir"
+b=Telegram/SourceFiles
 
 run_moc() {
     file=$1
