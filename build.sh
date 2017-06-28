@@ -336,7 +336,7 @@ qspec="$(qmake -query QMAKE_SPEC)"
 cxxflags="$cxxflags -I$qarchdata/mkspecs/$qspec"
 
 # third-party lib includes
-tp=../Telegram/ThirdParty
+tp="$sd"/Telegram/ThirdParty
 for includedir in GSL/include libtgvoip minizip variant/include
 do
     cxxflags="$cxxflags -I$tp/$includedir"
