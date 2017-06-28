@@ -185,7 +185,9 @@ sourcedir_moc() {
     for file in "$sourcedir"/*.cpp "$sourcedir"/*.h
     do
         echo "moc'ing $file"
-        dstfile=out/moc_sourcedir_"$(basename $file)".cpp
+        prefix="$(dirname "$file")"
+        mkdir -p "out/moc/$prefix"
+        dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
         moc --no-notes "$file" -o "$dstfile"
         [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
     done
@@ -203,7 +205,9 @@ do
         for file in "$sourcedir"/$dirname/*.cpp "$sourcedir"/$dirname/*.h
         do
             echo "moc'ing $file"
-            dstfile=out/moc_subdirs_"$(basename $file)".cpp
+            prefix="$(dirname "$file")"
+            mkdir -p "out/moc/$prefix"
+            dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
             moc --no-notes "$file" -o "$dstfile"
             [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
         done
