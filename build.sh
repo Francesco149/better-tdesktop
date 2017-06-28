@@ -1,5 +1,14 @@
 #!/bin/sh
 
+if [ $(pwd | grep -o " " | wc -l) -ne 0 ]
+then
+    echo "Paths with spaces are not supported by this build script"
+    echo "because the author is too lazy"
+    echo ""
+    echo "Please move me to a normal directory"
+    exit 1
+fi
+
 sd=$(pwd)
 
 # TODO: *maybe* make a makefile when I know how every part of the
