@@ -175,10 +175,22 @@ addjob \
     -o out \
     "$resdir"/scheme.tl
 
+sourcedir_moc() {
+    for file in "$sourcedir"/*.cpp "$sourcedir"/*.h
+    do
+        echo "moc'ing $file"
+        dstfile=out/moc_sourcedir_"$(basename $file)".cpp
+        moc --no-notes "$file" -o "$dstfile"
+        [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
+    done
+}
+
+addjob sourcedir_moc
+
 join
 cat out/tmp.*
 rm out/tmp.*
 
-# TODO: run moc, rcc, ...
+# TODO: run rcc, ...
 # TODO: compile rest
 
