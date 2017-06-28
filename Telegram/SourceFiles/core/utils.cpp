@@ -47,6 +47,11 @@ uint64 _SharedMemoryLocation[4] = { 0x00, 0x01, 0x02, 0x03 };
 
 #include <openssl/rand.h>
 
+// libressl dropped FIPS_mode_set, se we need a stub
+#ifdef LIBRESSL_VERSION_NUMBER
+#define FIPS_mode_set(x)
+#endif
+
 // Base types compile-time check
 static_assert(sizeof(char) == 1, "Basic types size check failed");
 static_assert(sizeof(uchar) == 1, "Basic types size check failed");
