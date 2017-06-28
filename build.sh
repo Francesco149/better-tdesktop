@@ -181,6 +181,8 @@ schemejob() {
 
 addjob schemejob
 
+# -----------------------------------------------------------------
+
 run_moc() {
     file=$1
     echo "moc'ing $file"
@@ -217,8 +219,12 @@ join
 cat out/tmp.* >> out/build.log
 rm out/tmp.*
 
+# -----------------------------------------------------------------
+
 # TODO: run rcc, ...
 # TODO: compile rest
+
+# -----------------------------------------------------------------
 
 endtime=$(date +"%s")
 diff=$(expr $endtime - $starttime)
