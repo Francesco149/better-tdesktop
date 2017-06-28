@@ -88,6 +88,8 @@ cxxflags="-std=c++14 -pipe -Wall -fPIC"
 cxxflags="$cxxflags -ITelegram/SourceFiles"
 cxxflags="$cxxflags $CXXFLAGS"
 
+# -----------------------------------------------------------------
+
 b=Telegram/SourceFiles/codegen
 
 # lang and numbers codegens didn't actually need Qt5Gui
