@@ -195,6 +195,25 @@ sourcedir_moc() {
 
 addjob sourcedir_moc
 
+for dirname in base boxes calls core chat_helpers data dialogs history \
+               inline_bots intro media mtproto overview platform/linux \
+               profile settings storage ui window
+do
+    job() {
+        for file in "$sourcedir"/$dirname/*.cpp "$sourcedir"/$dirname/*.h
+        do
+            echo "moc'ing $file"
+            dstfile=out/moc_subdirs_"$(basename $file)".cpp
+            moc --no-notes "$file" -o "$dstfile"
+            [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
+        done
+
+        exit 0
+    }
+
+    addjob job
+done
+
 join
 cat out/tmp.* >> out/build.log
 rm out/tmp.*
