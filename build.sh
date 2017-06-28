@@ -217,10 +217,6 @@ do
     addjob run_moc "$b"/$dirname/*.cpp "$b"/$dirname/*.h
 done
 
-join
-cat out/tmp.* >> out/build.log
-rm out/tmp.*
-
 # -----------------------------------------------------------------
 
 # resource files are compiled to hardcoded cpp files by qt's rcc
