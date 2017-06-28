@@ -358,7 +358,33 @@ fi
 
 # -----------------------------------------------------------------
 
+echo "Compiling Telegram"
+echo "Go get a coffee, this is gonna take a while..."
+
+addjob \
+  $cxx -c \
+    -include "stdafx.h" \
+    $cxxflags \
+    $pkgflags \
+    $(echo "$b"/*.cpp | sed 's|$b/stdafx.cpp||g')
+
+for dirname in base boxes calls core chat_helpers data dialogs \
+               history inline_bots intro media mtproto overview \
+               platform/linux profile settings storage ui window
+do
+    addjob \
+      $cxx -c \
+        -include "stdafx.h" \
+        $cxxflags \
+        $pkgflags \
+        "$b"/$dirname/*.cpp
+done
+
 # TODO: compile rest
+
+join
+cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
