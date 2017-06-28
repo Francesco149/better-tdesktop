@@ -163,19 +163,19 @@ codegenjob() {
 
 addjob codegenjob
 
-find . -name "*.style" | while read style
-do
-    job() {
-      echo $style
-      out/codegen_style \
-        -I "$b" \
-        -I Telegram/SourceFiles \
-        -o out/styles \
-        $style
-    }
+stylejob() {
+    find Telegram -name "*.style" | while read style
+    do
+        echo "$style"
+        out/codegen_style \
+          -I "$b" \
+          -I Telegram/SourceFiles \
+          -o out/styles \
+          "$style"
+    done
+}
 
-    addjob job
-done
+addjob stylejob
 
 schemejob() {
     echo "Generating scheme"
