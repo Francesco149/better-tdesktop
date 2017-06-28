@@ -50,6 +50,7 @@ join() {
         if [ $retcode != 0 ] && [ $retcode != 127 ]
         then
             echo "job $pid failed with code $retcode"
+            echo "Check 'out/build.log' for more details"
             cat out/tmp.* >> out/build.log
             exit $retcode
         fi
