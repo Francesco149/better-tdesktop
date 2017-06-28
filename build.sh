@@ -46,7 +46,13 @@ join() {
         wait $pid
         retcode=$?
 
+        # TODO: busybox doesn't hold the exit code unless
+        # you call wait before the process terminates,
+        # so we end up getting
         # 127 = already terminated
+        # which doesn't help figuring out if the process
+        # errored or not.
+        # find out a portable way to do this
         if [ $retcode != 0 ] && [ $retcode != 127 ]
         then
             echo "job $pid failed with code $retcode"
