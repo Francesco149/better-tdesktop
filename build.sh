@@ -143,14 +143,14 @@ rm out/tmp.*
 
 # -----------------------------------------------------------------
 
-resdir="Telegram/Resources"
+b="Telegram/Resources"
 
 codegenjob() {
   echo "Generating langs"
-  out/codegen_lang -o out "$resdir"/langs/lang.strings
+  out/codegen_lang -o out "$b"/langs/lang.strings
 
   echo "Generating numbers"
-  out/codegen_numbers -o out "$resdir"/numbers.txt
+  out/codegen_numbers -o out "$b"/numbers.txt
 
   echo "Generating emoji"
   out/codegen_emoji -o out
@@ -163,7 +163,7 @@ do
     job() {
       echo $style
       out/codegen_style \
-        -I "$resdir" \
+        -I "$b" \
         -I "$sourcedir" \
         -o out/styles \
         $style
@@ -176,7 +176,7 @@ schemejob() {
     echo "Generating scheme"
     python "$sourcedir/codegen/scheme/codegen_scheme.py" \
       -o out \
-      "$resdir"/scheme.tl
+      "$b"/scheme.tl
 }
 
 addjob schemejob
@@ -185,6 +185,8 @@ addjob schemejob
 
 # QT uses special metaprogramming syntax that needs to be handled
 # by moc, which will generate an additional cpp file
+
+b="$sourcedir"
 
 run_moc() {
     file=$1
@@ -198,7 +200,7 @@ run_moc() {
 }
 
 sourcedir_moc() {
-    for file in "$sourcedir"/*.cpp "$sourcedir"/*.h; do
+    for file in "$b"/*.cpp "$b"/*.h; do
         run_moc $file
     done
 }
@@ -210,8 +212,8 @@ for dirname in base boxes calls core chat_helpers data dialogs \
                platform/linux profile settings storage ui window
 do
     job() {
-        for file in "$sourcedir"/$dirname/*.cpp \
-                    "$sourcedir"/$dirname/*.h
+        for file in "$b"/$dirname/*.cpp \
+                    "$b"/$dirname/*.h
         do
             run_moc $file
         done
