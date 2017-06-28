@@ -181,18 +181,21 @@ schemejob() {
 
 addjob schemejob
 
-sourcedir_moc() {
-    for file in "$sourcedir"/*.cpp "$sourcedir"/*.h
-    do
-        echo "moc'ing $file"
-        prefix="$(dirname "$file")"
-        mkdir -p "out/moc/$prefix"
-        dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
-        moc --no-notes "$file" -o "$dstfile"
-        [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
-    done
+run_moc() {
+    file=$1
+    echo "moc'ing $file"
+    prefix="$(dirname "$file")"
+    mkdir -p "out/moc/$prefix"
+    dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
+    moc --no-notes "$file" -o "$dstfile"
+    [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
+    return 0
+}
 
-    exit 0
+sourcedir_moc() {
+    for file in "$sourcedir"/*.cpp "$sourcedir"/*.h; do
+        run_moc $file
+    done
 }
 
 addjob sourcedir_moc
@@ -202,17 +205,9 @@ for dirname in base boxes calls core chat_helpers data dialogs history \
                profile settings storage ui window
 do
     job() {
-        for file in "$sourcedir"/$dirname/*.cpp "$sourcedir"/$dirname/*.h
-        do
-            echo "moc'ing $file"
-            prefix="$(dirname "$file")"
-            mkdir -p "out/moc/$prefix"
-            dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
-            moc --no-notes "$file" -o "$dstfile"
-            [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
+        for file in "$sourcedir"/$dirname/*.cpp "$sourcedir"/$dirname/*.h; do
+            run_moc $file
         done
-
-        exit 0
     }
 
     addjob job
