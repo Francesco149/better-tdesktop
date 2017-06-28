@@ -195,37 +195,26 @@ addjob schemejob
 b=Telegram/SourceFiles
 
 run_moc() {
-    file=$1
-    echo "moc'ing $file"
-    prefix="$(dirname "$file")"
-    mkdir -p "out/moc/$prefix"
-    dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
-    moc --no-notes "$file" -o "$dstfile"
-    [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
+    for file in $@
+    do
+        echo "moc'ing $file"
+        prefix="$(dirname "$file")"
+        mkdir -p "out/moc/$prefix"
+        dstfile=out/moc/"$prefix"/moc_"$(basename $file)".cpp
+        moc --no-notes "$file" -o "$dstfile"
+        [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
+    done
+
     return 0
 }
 
-sourcedir_moc() {
-    for file in "$b"/*.cpp "$b"/*.h; do
-        run_moc $file
-    done
-}
-
-addjob sourcedir_moc
+addjob run_moc "$b"/*.cpp "$b"/*.h
 
 for dirname in base boxes calls core chat_helpers data dialogs \
                history inline_bots intro media mtproto overview \
                platform/linux profile settings storage ui window
 do
-    job() {
-        for file in "$b"/$dirname/*.cpp \
-                    "$b"/$dirname/*.h
-        do
-            run_moc $file
-        done
-    }
-
-    addjob job
+    addjob run_moc "$b"/$dirname/*.cpp "$b"/$dirname/*.h
 done
 
 join
