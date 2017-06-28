@@ -1,4 +1,5 @@
 *.swp
+/Telegram/SourceFiles/stdafx.h.gch
 /out/
 /Debug/
 /Release/
