@@ -50,7 +50,7 @@ join() {
         if [ $retcode != 0 ] && [ $retcode != 127 ]
         then
             echo "job $pid failed with code $retcode"
-            cat out/tmp.*
+            cat out/tmp.* >> out/build.log
             exit $retcode
         fi
         pids=$(echo $pids | cut -d"," -f2-)
@@ -135,7 +135,7 @@ do
 done
 
 join
-cat out/tmp.*
+cat out/tmp.* >> out/build.log
 rm out/tmp.*
 
 # -----------------------------------------------------------------
@@ -191,7 +191,7 @@ sourcedir_moc() {
 addjob sourcedir_moc
 
 join
-cat out/tmp.*
+cat out/tmp.* >> out/build.log
 rm out/tmp.*
 
 # TODO: run rcc, ...
