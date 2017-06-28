@@ -613,7 +613,17 @@ void _moveOldDataFiles(const QString &wasDir) {
 
 #if defined Q_OS_MAC || defined Q_OS_LINUX32 || defined Q_OS_LINUX64
 
+#ifdef __GNU_LIBC__
 #include <execinfo.h>
+#else
+// execinfo is glibc specific
+// just use dummy functions that do nothing on musl
+#include <sys/types.h>
+#define backtrace(A,B) 0
+#define backtrace_symbols(A, B) 0
+#define backtrace_symbols_fd(A,B,C) 0
+#endif
+
 #include <signal.h>
 #include <sys/syscall.h>
 
