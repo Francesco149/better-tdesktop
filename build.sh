@@ -75,6 +75,9 @@ trap handle_sigint SIGINT
 rm -rf out
 mkdir -p out
 
+echo "Build started on $(date)" > out/build.log
+starttime=$(date +"%s")
+
 cxx=${CXX:-g++}
 sourcedir="Telegram/SourceFiles"
 
@@ -196,4 +199,16 @@ rm out/tmp.*
 
 # TODO: run rcc, ...
 # TODO: compile rest
+
+endtime=$(date +"%s")
+diff=$(expr $endtime - $starttime)
+mins=$(expr $diff / 60)
+secs=$(expr $diff % 60)
+
+timemsg="Time spent: ${mins}m ${secs}s"
+echo $timemsg >> out/build.log
+
+echo ""
+echo $timemsg
+echo "Check 'out/build.log' for more details"
 
