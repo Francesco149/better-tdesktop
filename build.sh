@@ -169,11 +169,14 @@ do
     addjob job
 done
 
-echo "Generating scheme"
-addjob \
-  python "$sourcedir/codegen/scheme/codegen_scheme.py" \
-    -o out \
-    "$resdir"/scheme.tl
+schemejob() {
+    echo "Generating scheme"
+    python "$sourcedir/codegen/scheme/codegen_scheme.py" \
+      -o out \
+      "$resdir"/scheme.tl
+}
+
+addjob schemejob
 
 sourcedir_moc() {
     for file in "$sourcedir"/*.cpp "$sourcedir"/*.h
