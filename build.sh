@@ -64,6 +64,7 @@ handle_sigint() {
         pid=$(echo $pids | cut -d"," -f1-1)
         [ -z $pid ] && break
         kill -INT $pid
+        wait $pid
         pids=$(echo $pids | cut -d"," -f2-)
     done
 }
