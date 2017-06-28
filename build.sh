@@ -202,12 +202,14 @@ sourcedir_moc() {
 
 addjob sourcedir_moc
 
-for dirname in base boxes calls core chat_helpers data dialogs history \
-               inline_bots intro media mtproto overview platform/linux \
-               profile settings storage ui window
+for dirname in base boxes calls core chat_helpers data dialogs \
+               history inline_bots intro media mtproto overview \
+               platform/linux profile settings storage ui window
 do
     job() {
-        for file in "$sourcedir"/$dirname/*.cpp "$sourcedir"/$dirname/*.h; do
+        for file in "$sourcedir"/$dirname/*.cpp \
+                    "$sourcedir"/$dirname/*.h
+        do
             run_moc $file
         done
     }
