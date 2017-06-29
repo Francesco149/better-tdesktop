@@ -39,6 +39,8 @@ int main(int argc, char *argv[]) {
 	// both are finished in Application::closeApplication
 	Logs::start(); // must be started before Platform is started
 	Platform::start(); // must be started before QApplication is created
+	QCoreApplication::addLibraryPath("/usr/lib64/qt5/plugins");
+	QCoreApplication::addLibraryPath("/usr/lib/qt5/plugins");
 
 	int result = 0;
 	{
