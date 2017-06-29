@@ -288,13 +288,13 @@ run_moc() {
     return 0
 }
 
-addjob run_moc "$b"/*.cpp "$b"/*.h
+addjob run_moc "$b"/*.h
 
 for dirname in base boxes calls core chat_helpers data dialogs \
                history inline_bots intro media mtproto overview \
                platform/linux profile settings storage ui window
 do
-    addjob run_moc "$b"/$dirname/*.cpp "$b"/$dirname/*.h
+    addjob run_moc "$b"/$dirname/*.h
 done
 
 # -----------------------------------------------------------------
