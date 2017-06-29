@@ -130,7 +130,7 @@ starttime=$(date +"%s")
 
 cxx=${CXX:-g++}
 
-cxxflags="-std=c++14 -pipe -Wall -fPIC"
+cxxflags="-std=gnu++14 -pipe -Wall -fPIC"
 cxxflags="$cxxflags -I$sd/Telegram/SourceFiles"
 cxxflags="$cxxflags $CXXFLAGS"
 
@@ -343,7 +343,7 @@ qt_private_headers() {
 
 cd "$sd"/out
 
-cxxflags="-std=c++14 -pipe -Wall -fPIC -Wno-unused-variable"
+cxxflags="-std=gnu++14 -pipe -Wall -fPIC -Wno-unused-variable"
 cxxflags="$cxxflags -I$sd/Telegram/SourceFiles -I$sd/out"
 cxxflags="$cxxflags -DQ_OS_LINUX64=1"
 cxxflags="$cxxflags -DTDESKTOP_DISABLE_UNITY_INTEGRATION=1"
