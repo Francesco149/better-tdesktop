@@ -433,7 +433,69 @@ do
         "$b"/$dirname/*.cpp
 done
 
-# TODO: compile rest
+compile_generated_code() {
+    find "$sd"/out -name "*.cpp" | \
+    while read file
+    do
+        addjob \
+        $cxx -c \
+          -include "stdafx.h" \
+          $cxxflags \
+          $pkgflags \
+          "$file"
+    done
+}
+
+compile_generated_code
+
+tp="$sd"/Telegram/ThirdParty
+
+cc=${CC:-gcc}
+cflags="-std=gnu11 -pipe -Wall -fPIC" # TODO: check if PIC is required here
+
+for includedir in libtgvoip minizip libtgvoip/webrtc_dsp
+do
+    cflags="$cflags -I$tp/$includedir"
+done
+
+cflags="$defines $cflags"
+cflags="$cflags $CFLAGS"
+
+addjob \
+  $cc -c \
+    $cflags \
+    $pkgflags \
+    "$tp"/minizip/*.c
+
+tgvoipflags="-msse2 -DWEBRTC_APM_DEBUG_DUMP=0 -DTGVOIP_USE_DESKTOP_DSP=1"
+tgvoipflags="$tgvoipflags -DWEBRTC_POSIX=1"
+
+[ $without_pulse -ne 0 ] && \
+    tgvoipflags="$tgvoipflags -DLIBTGVOIP_WITHOUT_PULSE=1"
+
+compile_libtgvoip() {
+    find "$tp"/libtgvoip -name "*.cpp" -o -name "*.cc" | \
+    while read file
+    do
+        $cxx -c \
+          $cxxflags $tgvoipflags \
+          $pkgflags \
+          "$file" \
+          || return 1
+    done
+
+    find "$tp"/libtgvoip -name "*.c" | \
+    while read file
+    do
+        $cc -c \
+          $cflags $tgvoipflags \
+          $pkgflags \
+          "$file" \
+          || return 1
+    done
+}
+
+addjob compile_libtgvoip
 
 join
 cat "$sd"/out/tmp.* >> "$sd"/out/build.log
