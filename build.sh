@@ -292,7 +292,9 @@ addjob run_moc "$b"/*.h
 
 for dirname in base boxes calls core chat_helpers data dialogs \
                history inline_bots intro media mtproto overview \
-               platform/linux profile settings storage ui window
+               platform/linux profile settings storage ui window \
+               media/view media/player ui/effects ui/style \
+               ui/text ui/toast ui/widgets window/themes
 do
     addjob run_moc "$b"/$dirname/*.h
 done
@@ -415,7 +417,9 @@ addjob \
 
 for dirname in base boxes calls core chat_helpers data dialogs \
                history inline_bots intro media mtproto overview \
-               platform/linux profile settings storage ui window
+               platform/linux profile settings storage ui window \
+               media/view media/player ui/effects ui/style \
+               ui/text ui/toast ui/widgets window/themes
 do
     addjob \
       $cxx -c \
