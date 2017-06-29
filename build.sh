@@ -263,6 +263,15 @@ addjob schemejob
 
 b="$sd"/Telegram/SourceFiles
 
+# moc needs to be aware of the defines we will use to later compile
+# the main code, otherwise it might define/undefine stuff that
+# we want to disable
+defines="-DQ_OS_LINUX64=1"
+defines="$defines -DTDESKTOP_DISABLE_UNITY_INTEGRATION=1"
+defines="$defines -DTDESKTOP_DISABLE_AUTOUPDATE=1"
+defines="$defines -DTDESKTOP_DISABLE_CRASH_REPORTS=1"
+defines="$defines -D_REENTRANT=1 -DQT_PLUGIN=1"
+
 run_moc() {
     for file in $@
     do
@@ -271,7 +280,7 @@ run_moc() {
         mocprefix="$sd/out/moc/"
         mkdir -p "$mocprefix/$prefix"
         dstfile="$mocprefix/$prefix"/moc_"$(basename $file)".cpp
-        moc --no-notes "$file" -o "$dstfile"
+        moc $defines --no-notes "$file" -o "$dstfile"
         [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
     done
 
@@ -345,10 +354,7 @@ cd "$sd"/out
 
 cxxflags="-std=gnu++14 -pipe -Wall -fPIC -Wno-unused-variable"
 cxxflags="$cxxflags -I$sd/Telegram/SourceFiles -I$sd/out"
-cxxflags="$cxxflags -DQ_OS_LINUX64=1"
-cxxflags="$cxxflags -DTDESKTOP_DISABLE_UNITY_INTEGRATION=1"
-cxxflags="$cxxflags -DTDESKTOP_DISABLE_AUTOUPDATE=1"
-cxxflags="$cxxflags -DTDESKTOP_DISABLE_CRASH_REPORTS=1"
+cxxflags="$defines $cxxflags"
 
 # TODO: not all these packages are needed for the pch
 #       move the ones that are exclusive to the main source
