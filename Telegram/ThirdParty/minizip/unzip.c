@@ -409,7 +409,7 @@ extern int ZEXPORT unzStringFileNameCompare (const char*  fileName1,
   Locate the Central directory of a zipfile (at the end, just before
     the global comment)
 */
-local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream));
+local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream);
 local ZPOS64_T unz64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_filefunc_def, voidpf filestream)
 {
     unsigned char* buf;
@@ -874,7 +874,7 @@ local int unz64local_GetCurrentFileInfoInternal(unzFile file,
                                                   void *extraField,
                                                   uLong extraFieldBufferSize,
                                                   char *szComment,
-                                                  uLong commentBufferSize));
+                                                  uLong commentBufferSize);
 
 local int unz64local_GetCurrentFileInfoInternal (unzFile file,
                                                   unz_file_info64 *pfile_info,
