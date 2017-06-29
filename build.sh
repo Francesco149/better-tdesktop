@@ -14,6 +14,7 @@ sd=$(pwd)
 # -----------------------------------------------------------------
 
 without_pulse=0
+without_sse=0
 
 for param in $@
 do
@@ -21,12 +22,16 @@ do
         "--help")
             echo "Usage: $0 [parameters]"
             echo "--without-pulse: don't build pulseaudio support"
+            echo "--without-sse: don't enable SSE optimization"
             echo "--threads=n: number of parallel build threads"
             exit 0
             ;;
 
         "--without-pulse")
             without_pulse=1 ;;
+
+        "--without-sse")
+            without_sse=1 ;;
 
         "--threads=*")
             MAKE_THREADS=$(echo $param | cut -d"=" -f2-) ;;
@@ -86,6 +91,9 @@ for includedir in GSL/include libtgvoip minizip \
 do
     cxxflags="$cxxflags -I$tp/$includedir"
 done
+
+[ $without_sse -eq 0 ] && \
+    cxxflags="$cxxflags -msse2"
 
 # -----------------------------------------------------------------
 
