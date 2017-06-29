@@ -46,6 +46,16 @@ done
 
 # -----------------------------------------------------------------
 
+build_end() {
+    echo "Check 'out/build.log' for more details"
+
+    cd $sd
+    cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+    rm "$sd"/out/tmp.*
+
+    exit $1
+}
+
 # TODO: is QT_PLUGIN necessary?
 
 # qt and system libraries
@@ -130,14 +140,15 @@ echo "----------------------------------" >> "$sd"/out/build.log
 
 threads=${MAKE_THREADS:-9}
 pids=""
+all_pids=""
 
 addjob() {
-    while [ true ]
+    while [ ! -e "$sd"/out/abort ]
     do
         # trim completed processes off pids
         tmp=$pids
         newpids=""
-        while [ true ]
+        while [ ! -e "$sd"/out/abort ]
         do
             pid=$(echo $tmp | cut -d"," -f1-1)
             [ -z $pid ] && break
@@ -156,20 +167,27 @@ addjob() {
         fi
     done
 
-    $@ > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1 &
-    pids=$!,$pids
+    if [ ! -e "$sd"/out/abort ]
+    then
+        $@ > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1 &
+        newpid=$!
+        pids=$newpid,$pids
+        all_pids=$newpid,$all_pids
+    fi
 }
 
 handle_sigint() {
     echo "Caught SIGINT, killing jobs..."
+    touch "$sd"/out/abort
     while [ true ]
     do
-        pid=$(echo $pids | cut -d"," -f1-1)
+        pid=$(echo $all_pids | cut -d"," -f1-1)
         [ -z $pid ] && break
         kill -9 $pid
         wait $pid
-        pids=$(echo $pids | cut -d"," -f2-)
+        all_pids=$(echo $all_pids | cut -d"," -f2-)
     done
+    build_end 1
 }
 
 trap handle_sigint SIGINT
@@ -196,7 +214,7 @@ join() {
             echo "Check 'out/build.log' for more details"
             cat "$sd"/out/tmp.* >> "$sd"/out/build.log
             cd $sd
-            exit $retcode
+            build_end $retcode
         fi
         pids=$(echo $pids | cut -d"," -f2-)
     done
@@ -449,7 +467,7 @@ else
       $pkgflags \
       "$b"/stdafx.cpp \
       -o "$b"/stdafx.h.gch \
-      || exit $?
+      || build_end $?
 
     # this piece of crap is like 280 MB btw lol
 fi
@@ -551,8 +569,10 @@ $cxx \
   "$sd"/out/*.o \
   $pkglibs \
   -o "$sd"/out/Telegram \
-  > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1
+  > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1 \
+  || build_end $?
 
+cd $sd
 cat "$sd"/out/tmp.* >> "$sd"/out/build.log
 rm "$sd"/out/tmp.*
 
@@ -565,10 +585,8 @@ secs=$(expr $diff % 60)
 
 timemsg="Time spent: ${mins}m ${secs}s"
 echo $timemsg >> "$sd"/out/build.log
-
 echo ""
 echo $timemsg
-echo "Check 'out/build.log' for more details"
 
-cd $sd
+build_end 0
 
