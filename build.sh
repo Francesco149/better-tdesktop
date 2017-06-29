@@ -416,6 +416,9 @@ addjob \
     $pkgflags \
     $(echo "$b"/*.cpp | sed 's|$b/stdafx.cpp||g')
 
+# TODO: cd to correct dirs in case there's name clashes
+#       (there probably aren't though)
+
 for dirname in base boxes calls core chat_helpers data dialogs \
                history inline_bots intro media mtproto overview \
                platform/linux profile settings storage ui window \
