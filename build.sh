@@ -503,6 +503,29 @@ rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
+ldflags="-lstdc++ -pthread -ldl $LDFLAGS"
+pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network gtk+-2.0"
+pkgs="$pkgs appindicator-0.1 opus zlib x11 libcrypto libavformat"
+pkgs="$pkgs libavcodec libswresample libswscale libavutil"
+pkgs="$pkgs liblzma openal libdrm libva opus"
+pkglibs="$(pkg-config --libs $pkgs)"
+
+echo "Linking..."
+$cxx \
+  $ldflags \
+  "$sd"/out/*.o \
+  $pkglibs \
+  -o "$sd"/out/Telegram \
+  > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1
+
+cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+rm "$sd"/out/tmp.*
+
+# TODO: figure out why my binary is bigger than the one produced
+#       by cmake. but other than that HOLY SHIT it finally works
+
+# -----------------------------------------------------------------
+
 endtime=$(date +"%s")
 diff=$(expr $endtime - $starttime)
 mins=$(expr $diff / 60)
