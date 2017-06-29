@@ -130,14 +130,14 @@ starttime=$(date +"%s")
 
 cxx=${CXX:-g++}
 
-# first of all, we build the codegen's. these will be used to
-# generate code for localization, emoji, and other stuff.
-
 cxxflags="-std=c++14 -pipe -Wall -fPIC"
 cxxflags="$cxxflags -I$sd/Telegram/SourceFiles"
 cxxflags="$cxxflags $CXXFLAGS"
 
 # -----------------------------------------------------------------
+
+# first of all, we build the codegen's. these will be used to
+# generate code for localization, emoji, and other stuff.
 
 b="$sd"/Telegram/SourceFiles/codegen
 
