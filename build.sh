@@ -11,6 +11,31 @@ fi
 
 sd=$(pwd)
 
+# -----------------------------------------------------------------
+
+without_pulse=0
+
+for param in $@
+do
+    case "$param" in
+        "--help")
+            echo "Usage: $0 [parameters]"
+            echo "--without-pulse: don't build pulseaudio support"
+            echo "--threads=n: number of parallel build threads"
+            exit 0
+            ;;
+
+        "--without-pulse")
+            without_pulse=1 ;;
+
+        "--threads=*")
+            MAKE_THREADS=$(echo $param | cut -d"=" -f2-) ;;
+
+        *)
+            echo "ABUNAI: unknown parameter $param"
+    esac
+done
+
 # TODO: *maybe* make a makefile when I know how every part of the
 #       build works
 
