@@ -55,6 +55,65 @@ defines="$defines -DTDESKTOP_DISABLE_CRASH_REPORTS=1"
 defines="$defines -DWEBRTC_APM_DEBUG_DUMP=0 -DTGVOIP_USE_DESKTOP_DSP=1"
 defines="$defines -DWEBRTC_POSIX=1"
 
+[ $without_pulse -ne 0 ] && \
+    defines="$defines -DLIBTGVOIP_WITHOUT_PULSE=1"
+
+# -----------------------------------------------------------------
+
+cxx=${CXX:-g++}
+
+# NOTE: not all include dirs are necessary for all files, I should
+#       check how much extra include dirs slow compilation down
+
+cxxflags="-pipe -Wall -fPIC"
+
+cxxflags="$cxxflags -flto -Ofast"
+cxxflags="$cxxflags -ffunction-sections -fdata-sections"
+cxxflags="$cxxflags -g0 -fno-unwind-tables -s"
+cxxflags="$cxxflags -fno-asynchronous-unwind-tables"
+
+cxxflags="$cxxflags -I$sd/Telegram/SourceFiles -I$sd/out"
+
+# mkspec, half-undocumented qt include dirs
+qarchdata="$(qmake -query QT_INSTALL_ARCHDATA)"
+qspec="$(qmake -query QMAKE_SPEC)"
+cxxflags="$cxxflags -I$qarchdata/mkspecs/$qspec"
+
+# third-party lib includes
+tp="$sd"/Telegram/ThirdParty
+for includedir in GSL/include libtgvoip minizip \
+                  variant/include libtgvoip/webrtc_dsp
+do
+    cxxflags="$cxxflags -I$tp/$includedir"
+done
+
+# -----------------------------------------------------------------
+
+cc=${CC:-gcc}
+cflags="$cxxflags"
+
+# -----------------------------------------------------------------
+
+ldflags="$cxxflags $LDFLAGS"
+cxxflags="$defines -std=gnu++14 $cxxflags $CXXFLAGS"
+cflags="$defines -std=gnu11 $cflags $CFLAGS"
+
+# -----------------------------------------------------------------
+
+echo "c++ info"                           >> "$sd"/out/build.log
+printf "-------------------------------"  >> "$sd"/out/build.log
+echo "----------------------------------" >> "$sd"/out/build.log
+echo "$cxx $cxxflags"                     >> "$sd"/out/build.log
+printf "-------------------------------"  >> "$sd"/out/build.log
+echo "----------------------------------" >> "$sd"/out/build.log
+
+echo "c info"                             >> "$sd"/out/build.log
+printf "-------------------------------"  >> "$sd"/out/build.log
+echo "----------------------------------" >> "$sd"/out/build.log
+echo "$cc $cflags"                        >> "$sd"/out/build.log
+printf "-------------------------------"  >> "$sd"/out/build.log
+echo "----------------------------------" >> "$sd"/out/build.log
+
 # -----------------------------------------------------------------
 # just some rudimentary parallel job manager
 # TODO: tweak jobs so they are more equally sized (currently the
@@ -140,15 +199,9 @@ join() {
 rm -rf "$sd"/out
 mkdir -p "$sd"/out
 
-echo "Build started on $(date)" > "$sd/out"/build.log
+echo "Build started on $(date)" >> "$sd/out"/build.log
 
 starttime=$(date +"%s")
-
-cxx=${CXX:-g++}
-
-cxxflags="-std=gnu++14 -pipe -Wall -fPIC"
-cxxflags="$cxxflags -I$sd/Telegram/SourceFiles"
-cxxflags="$cxxflags $CXXFLAGS"
 
 # -----------------------------------------------------------------
 
@@ -366,14 +419,6 @@ qt_private_headers() {
 
 cd "$sd"/out
 
-cxxflags="-std=gnu++14 -pipe -Wall -fPIC -Wno-unused-variable"
-cxxflags="-flto -Ofast $cxxflags"
-cxxflags="-ffunction-sections -fdata-sections $cxxflags"
-cxxflags="$cxxflags -g0 -fno-unwind-tables"
-cxxflags="$cxxflags -fno-asynchronous-unwind-tables"
-cxxflags="$cxxflags -I$sd/Telegram/SourceFiles -I$sd/out"
-cxxflags="$defines $cxxflags"
-
 # TODO: not all these packages are needed for the pch
 #       move the ones that are exclusive to the main source
 #       same goes for defines
@@ -382,21 +427,6 @@ pkgs="$qtpkgs gtk+-2.0 appindicator-0.1 opus zlib"
 pkgflags="$(pkg-config --cflags $pkgs)"
 pkgflags="$pkgflags $(qt_private_headers $qtpkgs)"
 pkglibs="$(pkg-config --libs $pkgs)"
-
-# mkspec, some more half-undocumented include dirs
-qarchdata="$(qmake -query QT_INSTALL_ARCHDATA)"
-qspec="$(qmake -query QMAKE_SPEC)"
-cxxflags="$cxxflags -I$qarchdata/mkspecs/$qspec"
-
-# third-party lib includes
-tp="$sd"/Telegram/ThirdParty
-for includedir in GSL/include libtgvoip minizip \
-                  variant/include libtgvoip/webrtc_dsp
-do
-    cxxflags="$cxxflags -I$tp/$includedir"
-done
-
-cxxflags="$cxxflags $CXXFLAGS"
 
 b="$sd"/Telegram/SourceFiles
 
@@ -465,27 +495,11 @@ compile_generated_code
 
 tp="$sd"/Telegram/ThirdParty
 
-cc=${CC:-gcc}
-cflags="-std=gnu11 -pipe -Wall -fPIC" # TODO: check if PIC is required here
-
-for includedir in libtgvoip minizip libtgvoip/webrtc_dsp
-do
-    cflags="$cflags -I$tp/$includedir"
-done
-
-cflags="$defines $cflags"
-cflags="$cflags $CFLAGS"
-
 addjob \
   $cc -c \
     $cflags \
     $pkgflags \
     "$tp"/minizip/*.c
-
-tgvoipflags="-msse2 "
-
-[ $without_pulse -ne 0 ] && \
-    tgvoipflags="$tgvoipflags -DLIBTGVOIP_WITHOUT_PULSE=1"
 
 compile_libtgvoip() {
     find "$tp"/libtgvoip -name "*.cpp" -o -name "*.cc" | \
@@ -517,11 +531,6 @@ rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
-ldflags="-ffunction-sections -fdata-sections -Wl,--gc-sections -s"
-ldflags="$ldflags -lstdc++ -pthread -ldl -flto -Ofast"
-ldflags="$ldflags -g0 -fno-unwind-tables"
-ldflags="$ldflags -fno-asynchronous-unwind-tables"
-ldflags="$ldflags $LDFLAGS"
 pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network gtk+-2.0"
 pkgs="$pkgs appindicator-0.1 opus zlib x11 libcrypto libavformat"
 pkgs="$pkgs libavcodec libswresample libswscale libavutil"
