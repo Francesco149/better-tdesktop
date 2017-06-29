@@ -356,6 +356,10 @@ qt_private_headers() {
 cd "$sd"/out
 
 cxxflags="-std=gnu++14 -pipe -Wall -fPIC -Wno-unused-variable"
+cxxflags="-flto -Ofast $cxxflags"
+cxxflags="-ffunction-sections -fdata-sections $cxxflags"
+cxxflags="$cxxflags -g0 -fno-unwind-tables"
+cxxflags="$cxxflags -fno-asynchronous-unwind-tables"
 cxxflags="$cxxflags -I$sd/Telegram/SourceFiles -I$sd/out"
 cxxflags="$defines $cxxflags"
 
@@ -503,7 +507,11 @@ rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
-ldflags="-lstdc++ -pthread -ldl $LDFLAGS"
+ldflags="-ffunction-sections -fdata-sections -Wl,--gc-sections -s"
+ldflags="$ldflags -lstdc++ -pthread -ldl -flto -Ofast"
+ldflags="$ldflags -g0 -fno-unwind-tables"
+ldflags="$ldflags -fno-asynchronous-unwind-tables"
+ldflags="$ldflags $LDFLAGS"
 pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network gtk+-2.0"
 pkgs="$pkgs appindicator-0.1 opus zlib x11 libcrypto libavformat"
 pkgs="$pkgs libavcodec libswresample libswscale libavutil"
@@ -520,9 +528,6 @@ $cxx \
 
 cat "$sd"/out/tmp.* >> "$sd"/out/build.log
 rm "$sd"/out/tmp.*
-
-# TODO: figure out why my binary is bigger than the one produced
-#       by cmake. but other than that HOLY SHIT it finally works
 
 # -----------------------------------------------------------------
 
