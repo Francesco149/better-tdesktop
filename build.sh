@@ -40,6 +40,22 @@ done
 #       build works
 
 # -----------------------------------------------------------------
+
+# TODO: is QT_PLUGIN necessary?
+
+# qt and system libraries
+defines="-DQ_OS_LINUX64=1 -DQT_PLUGIN=1 -D_REENTRANT=1"
+
+# telegram
+defines="$defines -DTDESKTOP_DISABLE_UNITY_INTEGRATION=1"
+defines="$defines -DTDESKTOP_DISABLE_AUTOUPDATE=1"
+defines="$defines -DTDESKTOP_DISABLE_CRASH_REPORTS=1"
+
+# libtgvoip
+defines="$defines -DWEBRTC_APM_DEBUG_DUMP=0 -DTGVOIP_USE_DESKTOP_DSP=1"
+defines="$defines -DWEBRTC_POSIX=1"
+
+# -----------------------------------------------------------------
 # just some rudimentary parallel job manager
 # TODO: tweak jobs so they are more equally sized (currently the
 #       cpu isn't being fully utilized towards the end of the
@@ -266,11 +282,6 @@ b="$sd"/Telegram/SourceFiles
 # moc needs to be aware of the defines we will use to later compile
 # the main code, otherwise it might define/undefine stuff that
 # we want to disable
-defines="-DQ_OS_LINUX64=1"
-defines="$defines -DTDESKTOP_DISABLE_UNITY_INTEGRATION=1"
-defines="$defines -DTDESKTOP_DISABLE_AUTOUPDATE=1"
-defines="$defines -DTDESKTOP_DISABLE_CRASH_REPORTS=1"
-defines="$defines -D_REENTRANT=1 -DQT_PLUGIN=1"
 
 run_moc() {
     for file in $@
@@ -471,8 +482,7 @@ addjob \
     $pkgflags \
     "$tp"/minizip/*.c
 
-tgvoipflags="-msse2 -DWEBRTC_APM_DEBUG_DUMP=0 -DTGVOIP_USE_DESKTOP_DSP=1"
-tgvoipflags="$tgvoipflags -DWEBRTC_POSIX=1"
+tgvoipflags="-msse2 "
 
 [ $without_pulse -ne 0 ] && \
     tgvoipflags="$tgvoipflags -DLIBTGVOIP_WITHOUT_PULSE=1"
