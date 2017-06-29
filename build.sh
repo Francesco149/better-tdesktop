@@ -277,6 +277,7 @@ run_moc() {
     do
         echo "moc'ing $file"
         prefix="$(dirname "$file")"
+        prefix="$(relpath "$prefix")"
         mocprefix="$sd/out/moc/"
         mkdir -p "$mocprefix/$prefix"
         dstfile="$mocprefix/$prefix"/moc_"$(basename $file)".cpp
