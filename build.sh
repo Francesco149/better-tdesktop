@@ -375,7 +375,8 @@ cxxflags="$cxxflags -I$qarchdata/mkspecs/$qspec"
 
 # third-party lib includes
 tp="$sd"/Telegram/ThirdParty
-for includedir in GSL/include libtgvoip minizip variant/include
+for includedir in GSL/include libtgvoip minizip \
+                  variant/include libtgvoip/webrtc_dsp
 do
     cxxflags="$cxxflags -I$tp/$includedir"
 done
