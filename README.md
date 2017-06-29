@@ -15,6 +15,7 @@ It only focuses on linux for now.
 * removed gyp
 * build script doesn't require bash (compatible with smaller shells such
   as busybox's ash)
+* removed unity integration and dependency on unity libs
 
 Effort will be made to shrink the dependencies further.
 Credits to debian maintainers for the qt patches.
