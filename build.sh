@@ -41,6 +41,9 @@ done
 
 # -----------------------------------------------------------------
 # just some rudimentary parallel job manager
+# TODO: tweak jobs so they are more equally sized (currently the
+#       cpu isn't being fully utilized towards the end of the
+#       build)
 
 threads=${MAKE_THREADS:-9}
 pids=""
