@@ -42,7 +42,7 @@ Requirements:
 ```
 git clone https://github.com/Francesco149/better-tdesktop.git
 cd better-tdesktop
-./build --without-pulse --threads=9
+./build.sh --without-pulse --threads=9
 
 # ... wait a million years
 # ... wait some more
