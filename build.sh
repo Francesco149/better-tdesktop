@@ -77,6 +77,20 @@ addjob() {
     pids=$!,$pids
 }
 
+handle_sigint() {
+    echo "Caught SIGINT, killing jobs..."
+    while [ true ]
+    do
+        pid=$(echo $pids | cut -d"," -f1-1)
+        [ -z $pid ] && break
+        kill -9 $pid
+        wait $pid
+        pids=$(echo $pids | cut -d"," -f2-)
+    done
+}
+
+trap handle_sigint SIGINT
+
 join() {
     while [ true ]
     do
@@ -94,6 +108,7 @@ join() {
         # find out a portable way to do this
         if [ $retcode != 0 ] && [ $retcode != 127 ]
         then
+            handle_sigint
             echo "job $pid failed with code $retcode"
             echo "Check 'out/build.log' for more details"
             cat "$sd"/out/tmp.* >> "$sd"/out/build.log
@@ -103,20 +118,6 @@ join() {
         pids=$(echo $pids | cut -d"," -f2-)
     done
 }
-
-handle_sigint() {
-    echo "Caught SIGINT, killing jobs..."
-    while [ true ]
-    do
-        pid=$(echo $pids | cut -d"," -f1-1)
-        [ -z $pid ] && break
-        kill -INT $pid
-        wait $pid
-        pids=$(echo $pids | cut -d"," -f2-)
-    done
-}
-
-trap handle_sigint SIGINT
 
 # -----------------------------------------------------------------
 
