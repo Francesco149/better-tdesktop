@@ -253,8 +253,12 @@ w/CVnbwQOw0g5GBwwFV3r0uTTvy44xx8XXxk+Qknu4eBCsmrAFNnAgMBAAE=\n\
 #ifdef CUSTOM_API_ID
 #include "../../../TelegramPrivate/custom_api_id.h" // Custom API id and API hash
 #else
-static const int32 ApiId = 17349;
-static const char *ApiHash = "344583e45741c457fe1862106095a5eb";
+#if !defined(TDESKTOP_API_ID) || !defined(TDESKTOP_API_HASH)
+#define TDESKTOP_API_ID   33266
+#define TDESKTOP_API_HASH "8b40dc9cf6427eb16c493e78ac4630ac"
+#endif
+static const int32 ApiId = TDESKTOP_API_ID;
+static const char *ApiHash = TDESKTOP_API_HASH;
 #endif
 
 #if Q_BYTE_ORDER == Q_BIG_ENDIAN
