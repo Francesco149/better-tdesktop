@@ -1,6 +1,8 @@
 #!/bin/sh
 
-dest="$PREFIX/$DESTDIR"
+prefix=${PREFIX:-/}
+destdir=${DESTDIR:-/usr}
+dest="$prefix/$destdir"
 
 install -Dm755 out/Telegram "$dest"/bin/Telegram
 install -Dm755 lib/xdg/telegram-desktop.desktop \
