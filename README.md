@@ -52,6 +52,13 @@ cd better-tdesktop
 out/Telegram
 ```
 
+If you want to keep your previous telegram login and settings, create this
+compatibility symlink:
+
+```
+ln -s . "$HOME"/.local/share/TelegramDesktop/TelegramDesktop
+```
+
 If you want to install better-tdesktop system-wide or you are a package maintainer,
 use the install.sh script as a reference or run it directly.
 
