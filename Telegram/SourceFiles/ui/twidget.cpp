@@ -103,6 +103,22 @@ void Start() {
 		}
 	}
 #endif // Q_OS_WIN
+
+	QSettings settings;
+	QString ftoverride = settings.value("FontOverride", "").toString();
+	QString semiboldftoverride = settings.value("SemiboldFontOverride", "").toString();
+
+	if (!ftoverride.isEmpty()) {
+		OpenSansOverride = ftoverride;
+	} else {
+		settings.setValue("FontOverride", "");
+	}
+
+	if (!semiboldftoverride.isEmpty()) {
+		OpenSansSemiboldOverride = semiboldftoverride;
+	} else {
+		settings.setValue("SemiboldFontOverride", "");
+	}
 }
 
 QString GetOverride(const QString &familyName) {

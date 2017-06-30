@@ -2269,6 +2269,15 @@ namespace {
 	void initMedia() {
 		if (!::monofont) {
 			QString family;
+
+			QSettings settings;
+			QString ftoverride = settings.value("MonospaceFontOverride", "").toString();
+			if (!ftoverride.isEmpty()) {
+				tryFontFamily(family, ftoverride);
+			} else {
+				settings.setValue("MonospaceFontOverride", "");
+			}
+
 			tryFontFamily(family, qsl("Consolas"));
 			tryFontFamily(family, qsl("Liberation Mono"));
 			tryFontFamily(family, qsl("Menlo"));

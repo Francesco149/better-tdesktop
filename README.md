@@ -4,6 +4,7 @@ This is a work-in-progress fork of telegram desktop that will aim to minimize de
 It only focuses on linux for now.
 
 # Project status
+* customizable font overrides in ```~/.config/TelegramDesktop/TelegramDesktop.conf```
 * can be built without pulseaudio or pulseaudio headers
 * patched to build on musl libc
 * patched to build with libressl
@@ -52,3 +53,7 @@ cd better-tdesktop
 out/Telegram
 ```
 
+# Font override
+After starting Telegram once, ```~/.config/TelegramDesktop/TelegramDesktop.conf```
+should be created. Edit it with your desired fonts, or leave the values empty for
+the defaults, then restart telegram.

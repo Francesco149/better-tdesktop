@@ -598,6 +598,11 @@ $cxx \
 
 # -----------------------------------------------------------------
 
+echo "Symlinking your old telegram settings"
+ln -s . "$HOME"/.local/share/TelegramDesktop/TelegramDesktop
+
+# -----------------------------------------------------------------
+
 endtime=$(date +"%s")
 diff=$(expr $endtime - $starttime)
 mins=$(expr $diff / 60)

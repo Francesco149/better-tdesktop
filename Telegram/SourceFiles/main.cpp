@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
 	// Retina display support is working fine, others are not.
 	QCoreApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true);
 #endif
+	QCoreApplication::setOrganizationName(qsl("TelegramDesktop"));
 	QCoreApplication::setApplicationName(qsl("TelegramDesktop"));
 
 	settingsParseArgs(argc, argv);
