@@ -725,7 +725,7 @@ simpleAudioBlock random_id:long random_bytes:string raw_data:string = DecryptedA
 		uint32_t ackId, pseq, acks;
 		unsigned char type;
 		uint32_t tlid=(uint32_t) in.ReadInt32();
-		uint32_t packetInnerLen;
+		uint32_t packetInnerLen = 0;
 		if(tlid==TLID_DECRYPTED_AUDIO_BLOCK){
 			in.ReadInt64(); // random id
 			uint32_t randLen=(uint32_t) in.ReadTlLength();
