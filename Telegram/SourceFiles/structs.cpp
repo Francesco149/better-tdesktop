@@ -50,16 +50,6 @@ int peerColorIndex(const PeerId &peer) {
 	return (md5[peerId & 0x0F] & (peerIsUser(peer) ? 0x07 : 0x03));
 }
 
-ImagePtr generateUserpicImage(const style::icon &icon) {
-	auto data = QImage(icon.size() * cIntRetinaFactor(), QImage::Format_ARGB32_Premultiplied);
-	data.setDevicePixelRatio(cRetinaFactor());
-	{
-		Painter p(&data);
-		icon.paint(p, 0, 0, icon.width());
-	}
-	return ImagePtr(App::pixmapFromImageInPlace(std::move(data)), "PNG");
-}
-
 } // namespace
 
 style::color peerUserpicColor(int index) {

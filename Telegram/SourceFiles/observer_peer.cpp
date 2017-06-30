@@ -35,15 +35,6 @@ NeverFreedPointer<SmallUpdatesList> SmallUpdates;
 using AllUpdatesList = QMap<PeerData*, PeerUpdate>;
 NeverFreedPointer<AllUpdatesList> AllUpdates;
 
-void StartCallback() {
-	SmallUpdates.createIfNull();
-	AllUpdates.createIfNull();
-}
-void FinishCallback() {
-	SmallUpdates.clear();
-	AllUpdates.clear();
-}
-
 base::Observable<PeerUpdate, PeerUpdatedHandler> PeerUpdatedObservable;
 
 } // namespace

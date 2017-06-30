@@ -51,7 +51,6 @@ public:
 
 private:
 	bool appendRow(UserData *user);
-	bool prependRow(UserData *user);
 	std::unique_ptr<PeerListBox::Row> createRow(UserData *user) const;
 
 	ChannelData *_channel = nullptr;
@@ -128,14 +127,6 @@ bool BlockedBoxController::appendRow(UserData *user) {
 		return false;
 	}
 	view()->appendRow(createRow(user));
-	return true;
-}
-
-bool BlockedBoxController::prependRow(UserData *user) {
-	if (view()->findRow(user->id)) {
-		return false;
-	}
-	view()->prependRow(createRow(user));
 	return true;
 }
 

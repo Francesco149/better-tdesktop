@@ -40,10 +40,6 @@ namespace Notifications {
 namespace Default {
 namespace {
 
-int notificationMaxHeight() {
-	return st::notifyMinHeight + st::notifyReplyArea.heightMax + st::notifyBorderWidth;
-}
-
 QPoint notificationStartPosition() {
 	auto r = psDesktopRect();
 	auto isLeft = Notify::IsLeftCorner(Global::NotificationsCorner());
