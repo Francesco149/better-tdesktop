@@ -50,7 +50,7 @@ build_end() {
     echo "Check 'out/build.log' for more details"
 
     cd $sd
-    cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+    cat "$sd"/out/tmp.* >> "$log"
     rm "$sd"/out/tmp.*
 
     exit $1
@@ -121,23 +121,25 @@ cflags="$defines -std=gnu11 $cflags $CFLAGS"
 rm -rf "$sd"/out
 mkdir -p "$sd"/out
 
-echo "Build started on $(date)" >> "$sd/out"/build.log
+log="$sd"/out/build.log
+
+echo "Build started on $(date)" >> "$log"
 
 starttime=$(date +"%s")
 
-echo "c++ info"                           >> "$sd"/out/build.log
-printf "-------------------------------"  >> "$sd"/out/build.log
-echo "----------------------------------" >> "$sd"/out/build.log
-echo "$cxx $cxxflags"                     >> "$sd"/out/build.log
-printf "-------------------------------"  >> "$sd"/out/build.log
-echo "----------------------------------" >> "$sd"/out/build.log
+echo "c++ info"                           >> "$log"
+printf "-------------------------------"  >> "$log"
+echo "----------------------------------" >> "$log"
+echo "$cxx $cxxflags"                     >> "$log"
+printf "-------------------------------"  >> "$log"
+echo "----------------------------------" >> "$log"
 
-echo "c info"                             >> "$sd"/out/build.log
-printf "-------------------------------"  >> "$sd"/out/build.log
-echo "----------------------------------" >> "$sd"/out/build.log
-echo "$cc $cflags"                        >> "$sd"/out/build.log
-printf "-------------------------------"  >> "$sd"/out/build.log
-echo "----------------------------------" >> "$sd"/out/build.log
+echo "c info"                             >> "$log"
+printf "-------------------------------"  >> "$log"
+echo "----------------------------------" >> "$log"
+echo "$cc $cflags"                        >> "$log"
+printf "-------------------------------"  >> "$log"
+echo "----------------------------------" >> "$log"
 
 # -----------------------------------------------------------------
 # just some rudimentary parallel job manager
@@ -219,7 +221,7 @@ join() {
             handle_sigint
             echo "job $pid failed with code $retcode"
             echo "Check 'out/build.log' for more details"
-            cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+            cat "$sd"/out/tmp.* >> "$log"
             cd $sd
             build_end $retcode
         fi
@@ -286,7 +288,7 @@ do
 done
 
 join
-cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+cat "$sd"/out/tmp.* >> "$log"
 rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
@@ -415,7 +417,7 @@ run_rcc() {
 addjob run_rcc "$b"/*.qrc
 
 join
-cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+cat "$sd"/out/tmp.* >> "$log"
 rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
@@ -553,7 +555,7 @@ compile_libtgvoip() {
 addjob compile_libtgvoip
 
 join
-cat "$sd"/out/tmp.* >> "$sd"/out/build.log
+cat "$sd"/out/tmp.* >> "$log"
 rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
@@ -581,7 +583,7 @@ mins=$(expr $diff / 60)
 secs=$(expr $diff % 60)
 
 timemsg="Time spent: ${mins}m ${secs}s"
-echo $timemsg >> "$sd"/out/build.log
+echo $timemsg >> "$log"
 echo ""
 echo $timemsg
 
