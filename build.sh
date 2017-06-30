@@ -15,6 +15,8 @@ sd=$(pwd)
 
 without_pulse=0
 without_sse=0
+without_symlink=0
+
 with_gold=0
 
 for param in $@
@@ -24,6 +26,7 @@ do
             echo "Usage: $0 [parameters]"
             echo "--without-pulse: don't build pulseaudio support"
             echo "--without-sse: don't enable SSE optimization"
+            echo "--without-symlink: don't symlink old settings"
             echo "--threads=n: number of parallel build threads"
             echo "--with-gold: uses the gold multithreaded linker"
             exit 0
@@ -34,6 +37,9 @@ do
 
         "--without-sse")
             without_sse=1 ;;
+
+        "--without-symlink")
+            without_symlink=1 ;;
 
         "--with-gold")
             with_gold=1 ;;
@@ -608,8 +614,11 @@ $cxx \
 
 # -----------------------------------------------------------------
 
-echo "Symlinking your old telegram settings"
-ln -s . "$HOME"/.local/share/TelegramDesktop/TelegramDesktop
+if [ $without_symlink -eq 0 ]
+then
+    echo "Symlinking your old telegram settings"
+    ln -s . "$HOME"/.local/share/TelegramDesktop/TelegramDesktop
+fi
 
 # -----------------------------------------------------------------
 
