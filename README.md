@@ -3,6 +3,8 @@ This is a work-in-progress fork of telegram desktop that will aim to minimize de
 
 It only focuses on linux for now.
 
+![](http://hnng.moe/f/SI8)
+
 # Project status
 * customizable font overrides in ```~/.config/TelegramDesktop/TelegramDesktop.conf```
 * can be built without pulseaudio or pulseaudio headers
@@ -58,4 +60,3 @@ After starting Telegram once, ```~/.config/TelegramDesktop/TelegramDesktop.conf`
 should be created. Edit it with your desired fonts, or leave the values empty for
 the defaults, then restart telegram.
 
-![](http://hnng.moe/f/SI8)
