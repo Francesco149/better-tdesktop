@@ -87,6 +87,10 @@ cxx=${CXX:-g++}
 #       check how much extra include dirs slow compilation down
 
 cxxflags="-pipe -Wall -fPIC"
+cxxflags="$cxxflags -Wno-strict-aliasing -Wno-unused-variable"
+cxxflags="$cxxflags -Wno-switch -Wno-unused-but-set-variable"
+cxxflags="$cxxflags -Wno-sign-compare"
+# TODO: fix all signed->unsigned comparisons in the code
 
 cxxflags="$cxxflags -flto -Ofast"
 cxxflags="$cxxflags -ffunction-sections -fdata-sections"
