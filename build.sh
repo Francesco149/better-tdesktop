@@ -51,6 +51,16 @@ done
 
 # -----------------------------------------------------------------
 
+all_pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network gtk+-2.0"
+all_pkgs="$all_pkgs appindicator-0.1 opus zlib x11 libcrypto"
+all_pkgs="$all_pkgs libavformat libavcodec libswresample"
+all_pkgs="$all_pkgs libswscale libavutil liblzma openal libdrm"
+all_pkgs="$all_pkgs libva opus"
+
+pkg-config --cflags --libs "$all_pkgs" > /dev/null || exit $?
+
+# -----------------------------------------------------------------
+
 build_end() {
     [ $1 -ne 0 ] && echo "Build failed with code $1"
     echo "Check 'out/build.log' for more details"
@@ -585,11 +595,7 @@ rm "$sd"/out/tmp.*
 
 # -----------------------------------------------------------------
 
-pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network gtk+-2.0"
-pkgs="$pkgs appindicator-0.1 opus zlib x11 libcrypto libavformat"
-pkgs="$pkgs libavcodec libswresample libswscale libavutil"
-pkgs="$pkgs liblzma openal libdrm libva opus"
-pkglibs="$(pkg-config --libs $pkgs)"
+pkglibs="$(pkg-config --libs $all_pkgs)"
 
 echo "Linking"
 $cxx \
