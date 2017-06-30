@@ -15,6 +15,7 @@ sd=$(pwd)
 
 without_pulse=0
 without_sse=0
+with_gold=0
 
 for param in $@
 do
@@ -24,6 +25,7 @@ do
             echo "--without-pulse: don't build pulseaudio support"
             echo "--without-sse: don't enable SSE optimization"
             echo "--threads=n: number of parallel build threads"
+            echo "--with-gold: uses the gold multithreaded linker"
             exit 0
             ;;
 
@@ -32,6 +34,9 @@ do
 
         "--without-sse")
             without_sse=1 ;;
+
+        "--with-gold")
+            with_gold=1 ;;
 
         "--threads=*")
             MAKE_THREADS=$(echo $param | cut -d"=" -f2-) ;;
@@ -115,6 +120,12 @@ cflags="$cxxflags"
 ldflags="$cxxflags $LDFLAGS"
 cxxflags="$defines -std=gnu++14 $cxxflags $CXXFLAGS"
 cflags="$defines -std=gnu11 $cflags $CFLAGS"
+
+if [ $with_gold -ne 0 ]
+then
+    ldflags="$ldflags -fuse-ld=gold"
+    ldflags="$ldflags -Wl,--threads,--thread-count=$MAKE_THREADS"
+fi
 
 # -----------------------------------------------------------------
 
