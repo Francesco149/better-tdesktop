@@ -496,7 +496,6 @@ qtpkgs="Qt5Core Qt5Gui"
 pkgs="$qtpkgs gtk+-2.0 appindicator-0.1 opus zlib"
 pkgflags="$(pkg-config --cflags $pkgs)"
 pkgflags="$pkgflags $(qt_private_headers $qtpkgs)"
-pkglibs="$(pkg-config --libs $pkgs)"
 
 [ $without_pulse -eq 0 ] && \
     pkgflags="$pkgflags $(pkg-config --cflags libpulse)"
