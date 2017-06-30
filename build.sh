@@ -161,7 +161,8 @@ addjob() {
         do
             pid=$(echo $tmp | cut -d"," -f1-1)
             [ -z $pid ] && break
-            kill -0 $pid && newpids=$pid,$newpids
+            [ "$(ps | grep $pid | wc -l)" -ne 0 ] && \
+                newpids=$pid,$newpids
             tmp=$(echo $tmp | cut -d"," -f2-)
         done
 
@@ -192,7 +193,8 @@ handle_sigint() {
     do
         pid=$(echo $all_pids | cut -d"," -f1-1)
         [ -z $pid ] && break
-        kill -9 $pid
+        [ "$(ps | grep $pid | wc -l)" -ne 0 ] && \
+            kill -9 $pid
         wait $pid
         all_pids=$(echo $all_pids | cut -d"," -f2-)
     done
