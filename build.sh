@@ -89,7 +89,8 @@ defines="$defines -DTDESKTOP_DISABLE_AUTOUPDATE=1"
 defines="$defines -DTDESKTOP_DISABLE_CRASH_REPORTS=1"
 
 # libtgvoip
-defines="$defines -DWEBRTC_APM_DEBUG_DUMP=0 -DTGVOIP_USE_DESKTOP_DSP=1"
+defines="$defines -DWEBRTC_APM_DEBUG_DUMP=0"
+defines="$defines -DTGVOIP_USE_DESKTOP_DSP=1"
 defines="$defines -DWEBRTC_POSIX=1"
 
 [ $without_pulse -ne 0 ] && \
