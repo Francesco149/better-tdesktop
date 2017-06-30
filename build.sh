@@ -489,7 +489,7 @@ else
       -x c++-header \
       $cxxflags \
       $pkgflags \
-      "$b"/stdafx.cpp \
+      "$b"/stdafx.h \
       -o "$b"/stdafx.h.gch \
       || build_end $?
 
@@ -509,7 +509,7 @@ addjob \
     -include "stdafx.h" \
     $cxxflags \
     $pkgflags \
-    $(echo "$b"/*.cpp | sed 's|$b/stdafx.cpp||g')
+    "$b"/*.cpp
 
 # TODO: cd to correct dirs in case there's name clashes
 #       (there probably aren't though)
