@@ -118,6 +118,13 @@ cflags="$defines -std=gnu11 $cflags $CFLAGS"
 
 # -----------------------------------------------------------------
 
+rm -rf "$sd"/out
+mkdir -p "$sd"/out
+
+echo "Build started on $(date)" >> "$sd/out"/build.log
+
+starttime=$(date +"%s")
+
 echo "c++ info"                           >> "$sd"/out/build.log
 printf "-------------------------------"  >> "$sd"/out/build.log
 echo "----------------------------------" >> "$sd"/out/build.log
@@ -219,15 +226,6 @@ join() {
         pids=$(echo $pids | cut -d"," -f2-)
     done
 }
-
-# -----------------------------------------------------------------
-
-rm -rf "$sd"/out
-mkdir -p "$sd"/out
-
-echo "Build started on $(date)" >> "$sd/out"/build.log
-
-starttime=$(date +"%s")
 
 # -----------------------------------------------------------------
 
