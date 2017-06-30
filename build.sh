@@ -88,8 +88,12 @@ defines="$defines -DWEBRTC_APM_DEBUG_DUMP=0"
 defines="$defines -DTGVOIP_USE_DESKTOP_DSP=1"
 defines="$defines -DWEBRTC_POSIX=1"
 
-[ $without_pulse -ne 0 ] && \
+if [ $without_pulse -ne 0 ]
+then
     defines="$defines -DLIBTGVOIP_WITHOUT_PULSE=1"
+else
+    pkg-config --cflags libpulse > /dev/null || exit $?
+fi
 
 # -----------------------------------------------------------------
 
@@ -493,6 +497,9 @@ pkgs="$qtpkgs gtk+-2.0 appindicator-0.1 opus zlib"
 pkgflags="$(pkg-config --cflags $pkgs)"
 pkgflags="$pkgflags $(qt_private_headers $qtpkgs)"
 pkglibs="$(pkg-config --libs $pkgs)"
+
+[ $without_pulse -eq 0 ] && \
+    pkgflags="$pkgflags $(pkg-config --cflags libpulse)"
 
 b="$sd"/Telegram/SourceFiles
 
