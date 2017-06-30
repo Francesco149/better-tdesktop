@@ -52,6 +52,7 @@ done
 # -----------------------------------------------------------------
 
 build_end() {
+    [ $1 -ne 0 ] && echo "Build failed with code $1"
     echo "Check 'out/build.log' for more details"
 
     cd $sd
@@ -244,65 +245,72 @@ join() {
 
 # -----------------------------------------------------------------
 
-echo "Compiling codegens..."
-# first of all, we build the codegen's. these will be used to
-# generate code for localization, emoji, and other stuff.
+if [ -e "$sd"/tools ]
+then
+    echo "Found code generation tools"
+else
+    echo "Compiling code generation tools"
+    # first of all, we build the codegen's. these will be used to
+    # generate code for localization, emoji, and other stuff.
 
-b="$sd"/Telegram/SourceFiles/codegen
+    b="$sd"/Telegram/SourceFiles/codegen
 
-# lang and numbers codegens didn't actually need Qt5Gui
-# the devs simply forgot to remove the QtImage include they
-# copypasted
-pkgs="Qt5Core"
-pkgflags="$(pkg-config --cflags $pkgs)"
-pkglibs="$(pkg-config --libs $pkgs)"
+    # lang and numbers codegens didn't actually need Qt5Gui
+    # the devs simply forgot to remove the QtImage include they
+    # copypasted
+    pkgs="Qt5Core"
+    pkgflags="$(pkg-config --cflags $pkgs)"
+    pkglibs="$(pkg-config --libs $pkgs)"
 
-for type in lang numbers
-do
-    exe="$sd/out/codegen_${type}"
+    mkdir -p "$sd/tools"
 
-    job() {
-        echo $exe
+    for type in lang numbers
+    do
+        exe="$sd/tools/codegen_${type}"
 
-        $cxx \
-          $cxxflags \
-          $pkgflags \
-          "$b/common/"*.cpp \
-          "$b/$type/"*.cpp \
-          $pkglibs \
-          -o "$exe"
-    }
+        job() {
+            echo $exe
 
-    addjob job
-done
+            $cxx \
+              $cxxflags \
+              $pkgflags \
+              "$b/common/"*.cpp \
+              "$b/$type/"*.cpp \
+              $pkglibs \
+              -o "$exe"
+        }
 
-# emoji actually uses Qt5Gui
-pkgs="Qt5Core Qt5Gui"
-pkgflags="$(pkg-config --cflags $pkgs)"
-pkglibs="$(pkg-config --libs $pkgs)"
+        addjob job
+    done
 
-for type in emoji style
-do
-    exe="$sd/out/codegen_${type}"
+    # emoji actually uses Qt5Gui
+    pkgs="Qt5Core Qt5Gui"
+    pkgflags="$(pkg-config --cflags $pkgs)"
+    pkglibs="$(pkg-config --libs $pkgs)"
 
-    job() {
-        echo $exe
+    for type in emoji style
+    do
+        exe="$sd/tools/codegen_${type}"
 
-        $cxx \
-          $cxxflags \
-          $pkgflags \
-          "$b/common/"*.cpp \
-          "$b/$type/"*.cpp \
-          $pkglibs \
-          -o "$exe"
-    }
+        job() {
+            echo $exe
 
-    addjob job
-done
+            $cxx \
+              $cxxflags \
+              $pkgflags \
+              "$b/common/"*.cpp \
+              "$b/$type/"*.cpp \
+              $pkglibs \
+              -o "$exe"
+        }
 
-join
-cat "$sd"/out/tmp.* >> "$log"
-rm "$sd"/out/tmp.*
+        addjob job
+    done
+
+    join
+    cat "$sd"/out/tmp.* >> "$log"
+    rm "$sd"/out/tmp.*
+fi
 
 # -----------------------------------------------------------------
 
@@ -312,15 +320,15 @@ echo "Running code generation tools"
 
 codegenjob() {
   echo "Generating langs"
-  "$sd"/out/codegen_lang \
+  "$sd"/tools/codegen_lang \
     -o "$sd"/out "$b"/langs/lang.strings
 
   echo "Generating numbers"
-  "$sd"/out/codegen_numbers \
+  "$sd"/tools/codegen_numbers \
     -o "$sd"/out "$b"/numbers.txt
 
   echo "Generating emoji"
-  "$sd"/out/codegen_emoji -o "$sd"/out
+  "$sd"/tools/codegen_emoji -o "$sd"/out
 }
 
 addjob codegenjob
@@ -346,7 +354,7 @@ stylejob() {
         # TODO: check if there's any issues with absolute paths
         #       in the other codegen tools
         echo "$style"
-        "$sd"/out/codegen_style \
+        "$sd"/tools/codegen_style \
           -I "$rb" \
           -I "$rsd/Telegram/SourceFiles" \
           -o "$rsd/out/styles" \
