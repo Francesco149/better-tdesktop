@@ -573,10 +573,6 @@ $cxx \
   > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1 \
   || build_end $?
 
-cd $sd
-cat "$sd"/out/tmp.* >> "$sd"/out/build.log
-rm "$sd"/out/tmp.*
-
 # -----------------------------------------------------------------
 
 endtime=$(date +"%s")
