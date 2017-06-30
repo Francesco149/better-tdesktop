@@ -231,6 +231,7 @@ starttime=$(date +"%s")
 
 # -----------------------------------------------------------------
 
+echo "Compiling codegens..."
 # first of all, we build the codegen's. these will be used to
 # generate code for localization, emoji, and other stuff.
 
@@ -293,6 +294,8 @@ rm "$sd"/out/tmp.*
 # -----------------------------------------------------------------
 
 b="$sd/Telegram/Resources"
+
+echo "Running code generation tools"
 
 codegenjob() {
   echo "Generating langs"
@@ -563,7 +566,7 @@ pkgs="$pkgs libavcodec libswresample libswscale libavutil"
 pkgs="$pkgs liblzma openal libdrm libva opus"
 pkglibs="$(pkg-config --libs $pkgs)"
 
-echo "Linking..."
+echo "Linking (man I wish this could use multiple cores)..."
 $cxx \
   $ldflags \
   "$sd"/out/*.o \
