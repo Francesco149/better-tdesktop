@@ -3,7 +3,7 @@ This is a work-in-progress fork of telegram desktop that will aim to minimize de
 
 It only focuses on linux for now.
 
-![](http://hnng.moe/f/SI8)
+![](http://hnng.moe/f/SI9)
 
 # Project status
 * customizable font overrides in ```~/.config/TelegramDesktop/TelegramDesktop.conf```
