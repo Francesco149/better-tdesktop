@@ -1,3 +1,4 @@
+*.tar.gz
 *.swp
 /tools/
 /Telegram/SourceFiles/stdafx.h.gch
