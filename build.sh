@@ -27,8 +27,8 @@ do
             echo "--without-pulse: don't build pulseaudio support"
             echo "--without-sse: don't enable SSE optimization"
             echo "--without-symlink: don't symlink old settings"
-            echo "--threads=n: number of parallel build threads"
             echo "--with-gold: uses the gold multithreaded linker"
+            echo "--threads=n: number of parallel build threads"
             exit 0
             ;;
 
