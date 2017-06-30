@@ -587,7 +587,7 @@ pkgs="$pkgs libavcodec libswresample libswscale libavutil"
 pkgs="$pkgs liblzma openal libdrm libva opus"
 pkglibs="$(pkg-config --libs $pkgs)"
 
-echo "Linking (man I wish this could use multiple cores)..."
+echo "Linking"
 $cxx \
   $ldflags \
   "$sd"/out/*.o \
