@@ -52,6 +52,9 @@ cd better-tdesktop
 out/Telegram
 ```
 
+If you want to install better-tdesktop system-wide or you are a package maintainer,
+use the install.sh script as a reference or run it directly.
+
 # Font override
 After starting Telegram once, ```~/.config/TelegramDesktop/TelegramDesktop.conf```
 should be created. Edit it with your desired fonts, or leave the values empty for
