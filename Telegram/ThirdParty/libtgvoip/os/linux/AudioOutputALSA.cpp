@@ -74,6 +74,7 @@ bool AudioOutputALSA::IsPlaying(){
 
 void* AudioOutputALSA::StartThread(void* arg){
 	((AudioOutputALSA*)arg)->RunThread();
+	return 0;
 }
 
 void AudioOutputALSA::RunThread(){

@@ -71,6 +71,7 @@ void AudioInputALSA::Stop(){
 
 void* AudioInputALSA::StartThread(void* arg){
 	((AudioInputALSA*)arg)->RunThread();
+	return 0;
 }
 
 void AudioInputALSA::RunThread(){
