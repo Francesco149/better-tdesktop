@@ -1,9 +1,16 @@
 Fork of the linux version of Telegram Desktop with less bloat and customizable fonts.
 
+As of 1.1.7-b1, you can embed almost every video format and it will be visible to
+vanilla clients. Web and android users should be able to play most of these custom
+embeds, while iOS and desktop users will see the thumbnail but won't be able to play
+them unless it's mp4 or mov.
+
 ![](http://hnng.moe/f/SI9)
 
 # Project status
 * customizable font overrides in ```~/.config/TelegramDesktop/TelegramDesktop.conf```
+* allow embedding of every video format supported by the ffmpeg version you are
+  building against
 * can be built without pulseaudio or pulseaudio headers
 * patched to build on musl libc
 * patched to build with libressl
