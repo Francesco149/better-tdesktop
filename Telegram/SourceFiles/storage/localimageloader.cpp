@@ -264,10 +264,12 @@ bool FileLoadTask::CheckForSong(const QString &filepath, const QByteArray &conte
 bool FileLoadTask::CheckForVideo(const QString &filepath, const QByteArray &content, std::unique_ptr<MediaInformation> &result) {
 	static const auto mimes = {
 		qstr("video/mp4"),
+		qstr("video/webm"),
 		qstr("video/quicktime"),
 	};
 	static const auto extensions = {
 		qstr(".mp4"),
+		qstr(".webm"),
 		qstr(".mov"),
 	};
 	if (!CheckMimeOrExtensions(filepath, result->filemime, mimes, extensions)) {
