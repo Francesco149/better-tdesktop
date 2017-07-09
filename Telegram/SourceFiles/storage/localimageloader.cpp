@@ -272,7 +272,8 @@ bool FileLoadTask::CheckForVideo(const QString &filepath, const QByteArray &cont
 		qstr(".webm"),
 		qstr(".mov"),
 	};
-	if (!CheckMimeOrExtensions(filepath, result->filemime, mimes, extensions)) {
+	if (!result->filemime.startsWith("video") &&
+		!CheckMimeOrExtensions(filepath, result->filemime, mimes, extensions)) {
 		return false;
 	}
 
