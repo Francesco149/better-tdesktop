@@ -214,7 +214,9 @@ TimeMs FFMpegReaderImplementation::framePresentationTime() const {
 }
 
 TimeMs FFMpegReaderImplementation::durationMs() const {
-	if (_fmtContext->streams[_streamId]->duration == AV_NOPTS_VALUE) return 0;
+	if (_fmtContext->streams[_streamId]->duration == AV_NOPTS_VALUE) {
+		return (TimeMs)((double)_fmtContext->duration / AV_TIME_BASE * 1000);
+	}
 	return (_fmtContext->streams[_streamId]->duration * 1000LL * _fmtContext->streams[_streamId]->time_base.num) / _fmtContext->streams[_streamId]->time_base.den;
 }
 
