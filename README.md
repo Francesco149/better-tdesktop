@@ -7,6 +7,8 @@ them unless it's mp4 or mov.
 
 ![](http://hnng.moe/f/SI9)
 
+![](https://media.giphy.com/media/3ohryB1G18DNauuUrC/giphy.gif)
+
 # Project status
 * customizable font overrides in ```~/.config/TelegramDesktop/TelegramDesktop.conf```
 * allow embedding of every video format supported by the ffmpeg version you are
