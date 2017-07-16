@@ -58,7 +58,21 @@ done
 
 # -----------------------------------------------------------------
 
-all_pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network gtk+-2.0"
+gtkpkg=""
+
+if pkg-config gtk+-3.0; then
+    gtkpkg="gtk+-3.0"
+elif pkg-config gtk+-2.0; then
+    gtkpkg="gtk+-2.0"
+else
+    echo "Could not find gtk2-3, please install development"
+    echo "packages for gtk"
+    exit 1
+fi
+
+echo "Using $gtkpkg"
+
+all_pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network $gtkpkg"
 all_pkgs="$all_pkgs appindicator-0.1 opus zlib x11 libcrypto"
 all_pkgs="$all_pkgs libavformat libavcodec libswresample"
 all_pkgs="$all_pkgs libswscale libavutil liblzma openal libdrm"
