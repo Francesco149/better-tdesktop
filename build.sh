@@ -620,6 +620,7 @@ $cxx \
   $ldflags \
   "$sd"/out/*.o \
   $pkglibs \
+  -pthread -ldl \
   -o "$sd"/out/Telegram \
   > "$(mktemp -p "$sd/out" -u tmp.XXXXXX)" 2>&1 \
   || build_end $?
