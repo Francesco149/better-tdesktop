@@ -612,6 +612,9 @@ rm "$sd"/out/tmp.*
 
 pkglibs="$(pkg-config --libs $all_pkgs)"
 
+echo "Flushing I/O"
+sync
+
 echo "Linking"
 $cxx \
   $ldflags \
