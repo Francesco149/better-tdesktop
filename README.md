@@ -61,6 +61,17 @@ cd better-tdesktop
 out/Telegram
 ```
 
+If you have multiple versions of Qt installed you might need to
+enable qt5 specifically so that tools like moc use the correct
+qt version (check with ```moc -v``` ).
+
+qtchooser is often used for this, and I've provided a wrapper
+script for it, just run build like so:
+
+```
+./build.sh --qt-tools-prefix="$(pwd)/qtchooser-wrapper.sh"
+```
+
 If you want to keep your previous telegram login and settings, create this
 compatibility symlink:
 
