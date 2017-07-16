@@ -77,8 +77,25 @@ fi
 
 echo "Using $gtkpkg"
 
+appindicatorpkg=""
+
+for pkg in appindicator-0.1 appindicator3-0.1
+do
+    if pkg-config $pkg; then
+        appindicatorpkg=$pkg
+        break
+    fi
+done
+
+if [ -z $appindicatorpkg ]; then
+    echo "Could not find libappindicator, please install"
+    echo "development packages for it"
+fi
+
+echo "Using $appindicatorpkg"
+
 all_pkgs="Qt5Core Qt5Gui Qt5Widgets Qt5Network $gtkpkg"
-all_pkgs="$all_pkgs appindicator-0.1 opus zlib x11 libcrypto"
+all_pkgs="$all_pkgs $appindicatorpkg opus zlib x11 libcrypto"
 all_pkgs="$all_pkgs libavformat libavcodec libswresample"
 all_pkgs="$all_pkgs libswscale libavutil liblzma openal libdrm"
 all_pkgs="$all_pkgs libva opus"
@@ -524,7 +541,7 @@ cd "$sd"/out
 #       move the ones that are exclusive to the main source
 #       same goes for defines
 qtpkgs="Qt5Core Qt5Gui"
-pkgs="$qtpkgs $gtkpkg appindicator-0.1 opus zlib"
+pkgs="$qtpkgs $gtkpkg $appindicatorpkg opus zlib"
 pkgflags="$(pkg-config --cflags $pkgs)"
 pkgflags="$pkgflags $(qt_private_headers $qtpkgs)"
 
