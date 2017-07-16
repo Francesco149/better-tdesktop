@@ -524,7 +524,7 @@ cd "$sd"/out
 #       move the ones that are exclusive to the main source
 #       same goes for defines
 qtpkgs="Qt5Core Qt5Gui"
-pkgs="$qtpkgs gtk+-2.0 appindicator-0.1 opus zlib"
+pkgs="$qtpkgs $gtkpkg appindicator-0.1 opus zlib"
 pkgflags="$(pkg-config --cflags $pkgs)"
 pkgflags="$pkgflags $(qt_private_headers $qtpkgs)"
 
