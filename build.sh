@@ -39,7 +39,7 @@ do
         "--with-gold")
             with_gold=1 ;;
 
-        "--threads=*")
+        "--threads="*)
             MAKE_THREADS=$(echo $param | cut -d"=" -f2-) ;;
 
         *)
