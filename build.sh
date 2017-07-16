@@ -18,7 +18,7 @@ without_sse=0
 
 with_gold=0
 
-for param in $@
+for param in "$@"
 do
     case "$param" in
         "--help")
