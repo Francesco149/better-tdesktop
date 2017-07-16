@@ -18,6 +18,8 @@ without_sse=0
 
 with_gold=0
 
+qt_tools_prefix=""
+
 for param in "$@"
 do
     case "$param" in
@@ -26,6 +28,7 @@ do
             echo "--without-pulse: don't build pulseaudio support"
             echo "--without-sse: don't enable SSE optimization"
             echo "--with-gold: uses the gold multithreaded linker"
+            echo "--qt-tools-prefix: prefix for qt tool calls"
             echo "--threads=n: number of parallel build threads"
             exit 0
             ;;
@@ -38,6 +41,9 @@ do
 
         "--with-gold")
             with_gold=1 ;;
+
+        "--qt-tools-prefix="*)
+            qt_tools_prefix="$(echo $param | cut -d'=' -f2-)" ;;
 
         "--threads="*)
             MAKE_THREADS=$(echo $param | cut -d"=" -f2-) ;;
@@ -116,8 +122,8 @@ cxxflags="$cxxflags -fno-asynchronous-unwind-tables"
 cxxflags="$cxxflags -I$sd/Telegram/SourceFiles -I$sd/out"
 
 # mkspec, half-undocumented qt include dirs
-qarchdata="$(qmake -query QT_INSTALL_ARCHDATA)"
-qspec="$(qmake -query QMAKE_SPEC)"
+qarchdata="$($qt_tools_prefix qmake -query QT_INSTALL_ARCHDATA)"
+qspec="$($qt_tools_prefix qmake -query QMAKE_SPEC)"
 cxxflags="$cxxflags -I$qarchdata/mkspecs/$qspec"
 
 # third-party lib includes
@@ -415,7 +421,8 @@ run_moc() {
         mocprefix="$sd/out/moc/"
         mkdir -p "$mocprefix/$prefix"
         dstfile="$mocprefix/$prefix"/moc_"$(basename $file)".cpp
-        moc $defines --no-notes "$file" -o "$dstfile"
+        $qt_tools_prefix moc \
+            $defines --no-notes "$file" -o "$dstfile"
         [ $(wc -c < "$dstfile") -eq 0 ] && rm "$dstfile"
     done
 
@@ -447,7 +454,7 @@ run_rcc() {
         filename=$(basename "$file")
         filename_noext=$(echo $filename | rev | cut -d"." -f2- | rev)
 
-        rcc \
+        $qt_tools_prefix rcc \
           -no-compress \
           -name $filename_noext \
           "$file" \
