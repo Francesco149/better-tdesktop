@@ -239,7 +239,7 @@ handle_sigint() {
     build_end 1
 }
 
-trap handle_sigint SIGINT
+trap handle_sigint INT
 
 join() {
     while [ true ]
