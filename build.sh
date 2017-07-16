@@ -19,6 +19,7 @@ without_sse=0
 with_gold=0
 
 qt_tools_prefix=""
+link_only=0
 
 for param in "$@"
 do
@@ -29,6 +30,7 @@ do
             echo "--without-sse: don't enable SSE optimization"
             echo "--with-gold: uses the gold multithreaded linker"
             echo "--qt-tools-prefix: prefix for qt tool calls"
+            echo "--link-only: only perform linking"
             echo "--threads=n: number of parallel build threads"
             exit 0
             ;;
@@ -44,6 +46,9 @@ do
 
         "--qt-tools-prefix="*)
             qt_tools_prefix="$(echo $param | cut -d'=' -f2-)" ;;
+
+        "--link-only")
+            link_only=1 ;;
 
         "--threads="*)
             MAKE_THREADS=$(echo $param | cut -d"=" -f2-) ;;
@@ -170,8 +175,11 @@ fi
 
 # -----------------------------------------------------------------
 
-rm -rf "$sd"/out
-mkdir -p "$sd"/out
+if [ $link_only -eq 0 ]
+then
+    rm -rf "$sd"/out
+    mkdir -p "$sd"/out
+fi
 
 log="$sd"/out/build.log
 
@@ -284,6 +292,8 @@ join() {
 }
 
 # -----------------------------------------------------------------
+
+if [ $link_only -eq 0 ]; then
 
 if [ -e "$sd"/tools ]
 then
@@ -622,12 +632,16 @@ join
 cat "$sd"/out/tmp.* >> "$log"
 rm "$sd"/out/tmp.*
 
+fi #if [ $link_only -eq 0 ]
+
 # -----------------------------------------------------------------
 
 pkglibs="$(pkg-config --libs $all_pkgs)"
 
 echo "Flushing I/O"
 sync
+# TODO: figure out why the object files are still truncated until
+#       I re-run with --link-only on my SSD
 
 echo "Linking"
 $cxx \
