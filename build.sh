@@ -79,15 +79,11 @@ echo "Using $gtkpkg"
 
 appindicatorpkg=""
 
-for pkg in appindicator-0.1 appindicator3-0.1
-do
-    if pkg-config $pkg; then
-        appindicatorpkg=$pkg
-        break
-    fi
-done
-
-if [ -z $appindicatorpkg ]; then
+if pkg-config appindicator-0.1; then
+    appindicatorpkg="appindicator-0.1"
+elif pkg-config appindicator3-0.1; then
+    appindicatorpkg="appindicator3-0.1"
+else
     echo "Could not find libappindicator, please install"
     echo "development packages for it"
     exit 1
