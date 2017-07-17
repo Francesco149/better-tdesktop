@@ -90,6 +90,7 @@ done
 if [ -z $appindicatorpkg ]; then
     echo "Could not find libappindicator, please install"
     echo "development packages for it"
+    exit 1
 fi
 
 echo "Using $appindicatorpkg"
